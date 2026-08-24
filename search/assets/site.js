@@ -1,7 +1,7 @@
-/** EdgeNexus: local dev vs static hosting (GitHub / jsDelivr / Gitee) */
+/** EdgeNexus: local dev vs GitHub Pages / Gitee Pages */
 (function (global) {
-  const CDN_ROOT = 'https://cdn.jsdelivr.net/gh/qazplmygc/postgraduate-project@main';
   const GITEE_PAGES = 'https://qazplmygc.gitee.io/postgraduate-project';
+  const GITHUB_PAGES = 'https://qazplmygc.github.io/postgraduate-project';
 
   function isLocalDev() {
     const h = location.hostname;
@@ -11,9 +11,11 @@
   function hostKind() {
     const h = location.hostname;
     if (isLocalDev()) return 'local';
-    if (h.includes('jsdelivr.net')) return 'cdn';
     if (h.includes('gitee.io')) return 'gitee';
     if (h.includes('github.io')) return 'github';
+    if (h.includes('jsdelivr.net') || h.includes('statically.io') || h.includes('raw.githubusercontent.com')) {
+      return 'bad-cdn';
+    }
     return 'other';
   }
 
@@ -47,9 +49,10 @@
     return basePath + rel;
   }
 
-  function mirrorUrl(section) {
+  function pagesUrl(section) {
     const path = section.startsWith('/') ? section.slice(1) : section;
-    return CDN_ROOT + '/' + path;
+    if (kind === 'gitee') return GITEE_PAGES + '/' + path;
+    return GITHUB_PAGES + '/' + path;
   }
 
   function openPdfSmart(opts) {
@@ -83,26 +86,34 @@
   function injectStaticBanner() {
     if (isLocalDev()) return;
     if (document.getElementById('edgenexus-static-banner')) return;
+
+    if (kind === 'bad-cdn') {
+      const path = location.pathname.split('/').slice(-2).join('/');
+      const target = pagesUrl(path || 'search/index.html');
+      location.replace(target);
+      return;
+    }
+
     const bar = document.createElement('div');
     bar.id = 'edgenexus-static-banner';
     bar.style.cssText =
-      'background:#fff8e1;border-bottom:1px solid #ffe082;padding:8px 14px;' +
-      'font-size:.8rem;color:#5d4037;text-align:center;line-height:1.55;';
-    if (kind === 'cdn' || kind === 'gitee') {
+      'padding:8px 14px;font-size:.8rem;text-align:center;line-height:1.55;border-bottom:1px solid #ddd;';
+
+    if (kind === 'gitee') {
       bar.style.background = '#e8f5e9';
-      bar.style.borderColor = '#a5d6a7';
       bar.style.color = '#1b5e20';
-      bar.innerHTML = '✓ <strong>国内加速</strong> · 无需 VPN · 本地 PDF 请用 <code style="background:#c8e6c9;padding:1px 6px;border-radius:4px">search/open.bat</code>';
+      bar.innerHTML = '✓ <strong>Gitee 国内站</strong> · 本地 PDF 请用 <code style="background:#c8e6c9;padding:1px 6px;border-radius:4px">search/open.bat</code>';
     } else if (kind === 'github') {
-      bar.style.background = '#ffebee';
-      bar.style.borderColor = '#ef9a9a';
-      bar.style.color = '#b71c1c';
+      bar.style.background = '#fff8e1';
+      bar.style.color = '#5d4037';
       bar.innerHTML =
-        '⚠ GitHub 在国内较慢 · <a href="' + mirrorUrl('search/index.html') + '" style="color:#c62828;font-weight:700">点此切换国内加速</a>（免 VPN）';
+        'GitHub Pages · 国内慢可改用 <a href="' + GITEE_PAGES + '/search/index.html" style="font-weight:700">Gitee 国内站</a> · ' +
+        '<a href="' + GITHUB_PAGES.replace('/search/index.html', '') + '/go.html" style="font-weight:700">访问说明</a>';
     } else {
+      bar.style.background = '#fff8e1';
+      bar.style.color = '#5d4037';
       bar.innerHTML =
-        '🌐 在线预览 · 本地 PDF 需 <code style="background:#fff3cd;padding:1px 6px;border-radius:4px">search/open.bat</code> · ' +
-        '<a href="' + mirrorUrl('search/index.html') + '">国内加速</a>';
+        '在线预览 · 正确入口见 <a href="' + pagesUrl('go.html') + '">go.html</a> · 本地 PDF：<code>search/open.bat</code>';
     }
     document.body.insertBefore(bar, document.body.firstChild);
   }
@@ -111,11 +122,11 @@
     isLocalDev,
     hostKind,
     basePath,
-    CDN_ROOT,
     GITEE_PAGES,
+    GITHUB_PAGES,
     pdfApiUrl,
     staticAssetUrl,
-    mirrorUrl,
+    pagesUrl,
     openPdfSmart,
     injectStaticBanner,
   };
