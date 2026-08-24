@@ -1,0 +1,213 @@
+{
+  "_meta": {
+    "description": "期刊分区参考（中科院大类 + JCR），用于判断是否为「一区」",
+    "zone1_rule": "cas_zone == 1 视为中科院一区"
+  },
+  "journals": {
+    "IEEE Transactions on Wireless Communications": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Mobile Computing": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Services Computing": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Journal on Selected Areas in Communications": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Internet of Things Journal": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Neural Networks and Learning Systems": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Pattern Analysis and Machine Intelligence": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Image Processing": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Knowledge and Data Engineering": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Industrial Informatics": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Intelligent Transportation Systems": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Signal Processing": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Vehicular Technology": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Industrial Electronics": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Automatic Control": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Cloud Computing": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Parallel and Distributed Systems": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Computers": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Network Science and Engineering": {
+      "cas_zone": 2,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Information Forensics and Security": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Multimedia": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Communications": {
+      "cas_zone": 2,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Network and Service Management": {
+      "cas_zone": 2,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Green Communications and Networking": {
+      "cas_zone": 2,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Cognitive Communications and Networking": {
+      "cas_zone": 2,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Emerging Topics in Computing": {
+      "cas_zone": 2,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Dependable and Secure Computing": {
+      "cas_zone": 2,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Software Engineering": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Cybernetics": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Artificial Intelligence": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Network": {
+      "cas_zone": 2,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Communications Magazine": {
+      "cas_zone": 2,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Wireless Communications": {
+      "cas_zone": 2,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Access": {
+      "cas_zone": 3,
+      "jcr_quartile": "Q2"
+    },
+    "Computer Networks": {
+      "cas_zone": 2,
+      "jcr_quartile": "Q1"
+    },
+    "Future Generation Computer Systems": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "Journal of Parallel and Distributed Computing": {
+      "cas_zone": 2,
+      "jcr_quartile": "Q1"
+    },
+    "Information Sciences": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "Knowledge-Based Systems": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "Neurocomputing": {
+      "cas_zone": 2,
+      "jcr_quartile": "Q1"
+    },
+    "Computer Communications": {
+      "cas_zone": 3,
+      "jcr_quartile": "Q2"
+    },
+    "Ad Hoc Networks": {
+      "cas_zone": 3,
+      "jcr_quartile": "Q2"
+    },
+    "IEEE Open Journal of the Communications Society": {
+      "cas_zone": 3,
+      "jcr_quartile": "Q2"
+    },
+    "China Communications": {
+      "cas_zone": 3,
+      "jcr_quartile": "Q2"
+    },
+    "IEEE Transactions on Broadcasting": {
+      "cas_zone": 2,
+      "jcr_quartile": "Q1"
+    },
+    "IEEE Transactions on Consumer Electronics": {
+      "cas_zone": 2,
+      "jcr_quartile": "Q1"
+    },
+    "ACM Computing Surveys": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    },
+    "ACM Transactions on Sensor Networks": {
+      "cas_zone": 2,
+      "jcr_quartile": "Q1"
+    },
+    "Proceedings of the IEEE": {
+      "cas_zone": 1,
+      "jcr_quartile": "Q1"
+    }
+  },
+  "aliases": {
+    "IEEE TWC": "IEEE Transactions on Wireless Communications",
+    "IEEE TSC": "IEEE Transactions on Services Computing",
+    "IEEE TMC": "IEEE Transactions on Mobile Computing",
+    "IEEE TCOM": "IEEE Transactions on Communications",
+    "IEEE IoT Journal": "IEEE Internet of Things Journal",
+    "IEEE JSAC": "IEEE Journal on Selected Areas in Communications",
+    "IEEE TNNLS": "IEEE Transactions on Neural Networks and Learning Systems"
+  }
+}

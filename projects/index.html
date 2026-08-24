@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>项目管理 · EdgeNexus 边云合智</title>
+<link rel="icon" href="../search/assets/favicon.svg" type="image/svg+xml">
+<script src="../search/assets/site.js"></script>
+<style>
+  :root {
+    --bg: #f0f4f8; --card: #fff; --primary: #1a478a; --accent: #2e7d32;
+    --text: #333; --muted: #888; --border: #dde3ea;
+    --ok: #2e7d32; --warn: #ef6c00; --bad: #c62828;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .site-nav {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 28px; height: 52px; background: #0f2f5c;
+  }
+  .site-nav .brand { display: inline-flex; align-items: center; gap: 10px; color: #fff; font-weight: 700; text-decoration: none; }
+  .site-nav .brand img { width: 28px; height: 28px; border-radius: 7px; }
+  .site-nav .links { display: flex; gap: 6px; flex-wrap: wrap; }
+  .site-nav .links a {
+    color: rgba(255,255,255,.78); text-decoration: none; font-size: .9rem; font-weight: 600;
+    padding: 8px 14px; border-radius: 8px;
+  }
+  .site-nav .links a:hover { background: rgba(255,255,255,.1); color: #fff; }
+  .site-nav .links a.active { background: rgba(255,255,255,.16); color: #fff; }
+  header { background: linear-gradient(135deg, #0f2f5c, #1a478a 50%, #2563b0); color: #fff; padding: 28px 32px; }
+  header h1 { font-size: 1.5rem; }
+  header p { opacity: .92; margin-top: 8px; max-width: 920px; line-height: 1.55; font-size: .95rem; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 22px 20px 48px; }
+  .proj-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px; margin-bottom: 14px; cursor: pointer; transition: box-shadow .15s;
+  }
+  .proj-card:hover { box-shadow: 0 4px 16px rgba(26,71,138,.12); }
+  .badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 10px; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: .72rem; font-weight: 700; }
+  .b-active { background: #e8f5e9; color: var(--ok); }
+  .b-phase { background: #e3f2fd; color: #1565c0; }
+  .b-tag { background: #f0f4f8; color: #456; }
+  .section-title {
+    font-size: 1.02rem; font-weight: 700; color: var(--primary);
+    margin: 26px 0 10px; padding-left: 10px; border-left: 4px solid var(--accent);
+  }
+  .panel {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 18px; margin-bottom: 12px;
+  }
+  .panel h3, .panel h4 { font-size: .92rem; color: var(--primary); margin-bottom: 8px; }
+  .panel p, .panel li { font-size: .88rem; line-height: 1.65; color: #444; }
+  .panel ul { padding-left: 1.1rem; }
+  .meta { font-size: .84rem; color: var(--muted); line-height: 1.5; margin-top: 6px; }
+  .formula {
+    margin-top: 12px; padding: 12px 14px; border-radius: 10px;
+    background: #eef5ff; border: 1px solid #bbdefb;
+    font-weight: 700; color: var(--primary); font-size: .92rem;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: .8rem; background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 12px; }
+  th, td { border-bottom: 1px solid var(--border); padding: 10px 8px; text-align: left; vertical-align: top; line-height: 1.45; }
+  th { background: #e8eef5; color: var(--primary); }
+  tr:last-child td { border-bottom: none; }
+  tr.highlight td { background: #e8f5e9; font-weight: 600; }
+  .grid3 { display: grid; gap: 10px; }
+  @media (min-width: 800px) { .grid3 { grid-template-columns: 1fr 1fr 1fr; } }
+  .layer {
+    background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 14px;
+  }
+  .layer h4 { color: var(--primary); font-size: .88rem; margin-bottom: 6px; }
+  .mod {
+    border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px;
+    margin-bottom: 10px; background: #fff;
+  }
+  .mod h4 { font-size: .9rem; color: var(--primary); }
+  .mod code { font-size: .76rem; background: #eef2f7; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 6px; word-break: break-all; }
+  .timeline { list-style: none; }
+  .timeline li {
+    display: grid; grid-template-columns: 88px 1fr; gap: 10px;
+    padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px;
+    margin-bottom: 8px; background: #fff; font-size: .86rem; line-height: 1.5;
+  }
+  .timeline .date { font-weight: 800; color: var(--primary); font-size: .78rem; }
+  .timeline .st-done { color: var(--ok); font-weight: 700; font-size: .72rem; }
+  .timeline .st-progress { color: var(--warn); font-weight: 700; font-size: .72rem; }
+  pre.run {
+    background: #0f2f5c; color: #e3f2fd; padding: 12px 14px; border-radius: 10px;
+    font-size: .78rem; overflow-x: auto; line-height: 1.55; margin-top: 8px;
+  }
+  .btn {
+    display: inline-block; margin-top: 8px; margin-right: 8px; padding: 7px 12px;
+    background: var(--primary); color: #fff; border-radius: 7px; font-size: .82rem;
+    font-weight: 600; text-decoration: none;
+  }
+  .btn.ghost { background: #fff; color: var(--primary); border: 1px solid #bbdefb; }
+  .btn:hover { background: #2563b0; }
+  .btn.ghost:hover { background: #e3f2fd; }
+  .back { display: inline-block; margin-bottom: 12px; color: var(--primary); font-weight: 600; text-decoration: none; font-size: .9rem; }
+  code.path { font-size: .78rem; background: #eef2f7; padding: 1px 6px; border-radius: 4px; word-break: break-all; }
+  .err { color: var(--bad); padding: 20px; }
+  .muted { color: var(--muted); font-size: .8rem; }
+</style>
+</head>
+<body>
+<nav class="site-nav" aria-label="站点导航">
+  <a class="brand" href="../search/index.html">
+    <img src="../search/assets/favicon.svg" alt="">
+    <span>EdgeNexus · 边云合智</span>
+  </a>
+  <div class="links">
+    <a href="../search/index.html">文献检索</a>
+    <a href="../patents/index.html">专利对照</a>
+    <a href="../reproduce/index.html">复现案例</a>
+    <a href="../videos/index.html">会议视频</a>
+    <a href="index.html" class="active">项目管理</a>
+    <a href="../briefing/index.html">开学汇报</a>
+    <a href="../waic/index.html">WAIC 学习</a>
+  </div>
+</nav>
+<header>
+  <h1>项目管理 · 在研课题与交付物</h1>
+  <p>跟踪云边协同相关自研项目的阶段、模块、实验结论与本地路径；与文献检索、复现案例、WAIC 笔记交叉引用。</p>
+</header>
+<div class="wrap" id="app"><p class="muted">加载中…</p></div>
+<script>
+async function main() {
+  const app = document.getElementById('app');
+  let data;
+  try {
+    const r = await fetch('projects.json?_=' + Date.now());
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    data = await r.json();
+  } catch (e) {
+    app.innerHTML = '<p class="err">无法加载 projects.json。请用本地服务打开：http://127.0.0.1:8765/projects/</p>';
+    return;
+  }
+  const id = new URLSearchParams(location.search).get('id');
+  if (id) {
+    const p = data.projects.find(x => x.id === id);
+    if (!p) { app.innerHTML = '<p class="err">未找到项目 ' + esc(id) + '</p>'; return; }
+    app.innerHTML = renderDetail(p, data.updated);
+    return;
+  }
+  app.innerHTML = renderList(data);
+}
+
+function renderList(data) {
+  let h = `<p class="muted">更新 ${esc(data.updated)} · ${data.projects.length} 个项目</p>`;
+  for (const p of data.projects) {
+    h += `<article class="proj-card" onclick="location.href='?id=${encodeURIComponent(p.id)}'">
+      <div style="font-weight:800;color:var(--primary);font-size:1.05rem">${esc(p.title)}</div>
+      <div class="badges">
+        <span class="badge b-active">${esc(p.status_label)}</span>
+        <span class="badge b-phase">${esc(p.phase)}</span>
+        ${(p.tags || []).slice(0, 4).map(t => `<span class="badge b-tag">${esc(t)}</span>`).join('')}
+      </div>
+      <p style="font-size:.88rem;color:#555;line-height:1.55;max-width:820px">${esc(p.summary)}</p>
+      <p class="meta" style="margin-top:8px"><code class="path">${esc(p.root_path)}</code></p>
+    </article>`;
+  }
+  return h;
+}
+
+function renderDetail(p, updated) {
+  let h = `<a class="back" href="index.html">← 全部项目</a>
+    <div class="panel">
+      <div class="badges">
+        <span class="badge b-active">${esc(p.status_label)}</span>
+        <span class="badge b-phase">${esc(p.phase)}</span>
+        ${(p.tags || []).map(t => `<span class="badge b-tag">${esc(t)}</span>`).join('')}
+      </div>
+      <h2 style="font-size:1.25rem;color:var(--primary);margin-top:8px">${esc(p.title)}</h2>
+      <p class="meta">${esc(p.short)}</p>
+      <p style="margin-top:12px;font-size:.92rem;line-height:1.7">${esc(p.summary)}</p>
+      <div class="formula">${esc(p.one_liner)}</div>
+      <p class="meta" style="margin-top:10px">根目录：<code class="path">${esc(p.root_path)}</code><br>上级：<code class="path">${esc(p.parent_folder)}</code> · 页面更新 ${esc(updated)}</p>
+      <div style="margin-top:10px">${(p.links || []).map(l => `<a class="btn ghost" href="${esc(l.url)}" ${l.url.startsWith('http') ? 'target="_blank" rel="noopener"' : ''}>${esc(l.label)}</a>`).join('')}</div>
+    </div>`;
+
+  if (p.metrics && p.metrics.rows) {
+    h += `<h2 class="section-title">${esc(p.metrics.headline || '核心指标')}</h2>
+      <div style="overflow-x:auto"><table>
+        <thead><tr><th>指标</th><th>集中式</th><th>联邦 / 优化</th><th>说明</th></tr></thead><tbody>`;
+    for (const row of p.metrics.rows) {
+      const hl = (row.federated || '').includes('99.90') || (row.federated || '').includes('0 MB') ? ' class="highlight"' : '';
+      h += `<tr${hl}><td>${esc(row.metric)}</td><td>${esc(row.centralized)}</td><td>${esc(row.federated)}</td><td>${esc(row.note || '')}</td></tr>`;
+    }
+    h += `</tbody></table></div>`;
+  }
+
+  if (p.architecture) {
+    h += `<h2 class="section-title">系统架构</h2><div class="grid3">`;
+    for (const L of (p.architecture.layers || [])) {
+      h += `<div class="layer"><h4>${esc(L.name)}</h4><p>${esc(L.role)}</p>
+        <ul style="margin-top:6px;font-size:.8rem">${(L.components || []).map(c => `<li><code class="path">${esc(c)}</code></li>`).join('')}</ul></div>`;
+    }
+    h += `</div>`;
+    if (p.architecture.methods && p.architecture.methods.length) {
+      h += `<div class="panel" style="margin-top:10px"><h4>方法栈</h4><ul>${p.architecture.methods.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>`;
+    }
+  }
+
+  h += `<h2 class="section-title">代码模块</h2>`;
+  for (const m of (p.modules || [])) {
+    h += `<div class="mod"><h4>${esc(m.name)}</h4>
+      <p class="meta">${esc(m.path)} — ${esc(m.desc)}</p>
+      <code>${esc(m.cmd)}</code></div>`;
+  }
+
+  h += `<h2 class="section-title">里程碑</h2><ul class="timeline">`;
+  for (const ms of (p.milestones || [])) {
+    const stCls = ms.status === 'done' ? 'st-done' : 'st-progress';
+    const stLbl = ms.status === 'done' ? '已完成' : '进行中';
+    h += `<li><div><div class="date">${esc(ms.date)}</div><div class="${stCls}">${stLbl}</div></div>
+      <div><strong>${esc(ms.title)}</strong><div class="muted" style="margin-top:4px">${esc(ms.note)}</div></div></li>`;
+  }
+  h += `</ul>`;
+
+  h += `<h2 class="section-title">文档索引</h2><div class="panel"><ul>`;
+  for (const d of (p.docs || [])) {
+    h += `<li><code class="path">${esc(d.path)}</code> — ${esc(d.role)}</li>`;
+  }
+  h += `</ul></div>`;
+
+  if (p.figures && p.figures.length) {
+    h += `<h2 class="section-title">实验图表（项目内路径）</h2><div class="panel"><ul>`;
+    for (const f of p.figures) {
+      h += `<li><code class="path">${esc(f.path)}</code> — ${esc(f.caption)}</li>`;
+    }
+    h += `</ul><p class="muted" style="margin-top:8px">图表位于项目根目录下，请在本地打开 root_path 查看。</p></div>`;
+  }
+
+  h += `<h2 class="section-title">快速启动</h2><pre class="run">${esc((p.how_to_run || []).join('\n'))}</pre>`;
+
+  if (p.research_bridge && p.research_bridge.length) {
+    h += `<h2 class="section-title">与站内其他板块对照</h2>`;
+    for (const row of p.research_bridge) {
+      h += `<div class="panel"><h4>${esc(row.topic)}</h4><p>${esc(row.link)}</p></div>`;
+    }
+  }
+
+  return h;
+}
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+main();
+</script>
+</body>
+</html>

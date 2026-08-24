@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>开学见导师 · 汇报稿 · EdgeNexus</title>
+<link rel="icon" href="../search/assets/favicon.svg" type="image/svg+xml">
+<script src="../search/assets/site.js"></script>
+<style>
+  :root {
+    --bg: #0f2f5c; --slide-bg: #fff; --primary: #1a478a; --accent: #2e7d32;
+    --text: #222; --muted: #666; --border: #dde3ea; --gold: #f9a825;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--text);
+  }
+
+  /* ── 顶栏 ── */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; background: rgba(15,47,92,.95); backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  .topbar .brand { color: #fff; font-weight: 700; font-size: .88rem; text-decoration: none; }
+  .topbar .ctrl { display: flex; align-items: center; gap: 10px; }
+  .topbar button, .topbar a.btn-mini {
+    background: rgba(255,255,255,.12); border: none; color: #fff;
+    padding: 6px 12px; border-radius: 6px; font-size: .78rem; font-weight: 600;
+    cursor: pointer; text-decoration: none;
+  }
+  .topbar button:hover, .topbar a.btn-mini:hover { background: rgba(255,255,255,.22); }
+  .progress-wrap { flex: 1; max-width: 280px; height: 4px; background: rgba(255,255,255,.15); border-radius: 2px; margin: 0 16px; }
+  .progress-bar { height: 100%; background: var(--gold); border-radius: 2px; transition: width .25s; width: 0; }
+  .slide-counter { color: rgba(255,255,255,.7); font-size: .78rem; min-width: 56px; text-align: right; }
+
+  /* ── 幻灯片舞台 ── */
+  .deck { position: fixed; inset: 48px 0 56px 0; display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .slide {
+    display: none; width: min(960px, 100%); max-height: 100%; overflow-y: auto;
+    background: var(--slide-bg); border-radius: 16px;
+    box-shadow: 0 24px 80px rgba(0,0,0,.35);
+    padding: 40px 48px 36px;
+    animation: fadeIn .3s ease;
+  }
+  .slide.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .slide.tag-cover { background: linear-gradient(145deg, #0f2f5c 0%, #1a478a 55%, #2563b0 100%); color: #fff; text-align: center; padding: 56px 48px; }
+  .slide.tag-cover h1 { font-size: clamp(1.6rem, 4vw, 2.2rem); line-height: 1.35; }
+  .slide.tag-cover .sub { opacity: .88; margin-top: 16px; font-size: 1.05rem; line-height: 1.6; }
+  .slide.tag-cover .meta { margin-top: 28px; opacity: .65; font-size: .88rem; }
+
+  .slide h2 {
+    font-size: 1.45rem; color: var(--primary); margin-bottom: 18px;
+    padding-bottom: 10px; border-bottom: 3px solid var(--accent);
+  }
+  .slide h3 { font-size: .95rem; color: var(--primary); margin: 16px 0 8px; }
+  .slide p, .slide li { font-size: .92rem; line-height: 1.72; color: #333; }
+  .slide ul, .slide ol { padding-left: 1.25rem; margin: 8px 0; }
+  .slide li { margin-bottom: 6px; }
+  .lead { font-size: 1.02rem; font-weight: 600; color: var(--primary); line-height: 1.65; margin-bottom: 14px; }
+  .quote {
+    background: #eef5ff; border-left: 4px solid var(--primary);
+    padding: 14px 16px; border-radius: 0 10px 10px 0; margin: 12px 0;
+    font-size: .95rem; line-height: 1.65; color: #1a478a; font-weight: 600;
+  }
+  .formula {
+    text-align: center; padding: 14px; background: #f0f4f8; border-radius: 10px;
+    font-weight: 800; color: var(--primary); font-size: .95rem; margin: 14px 0;
+  }
+  .grid2 { display: grid; gap: 12px; }
+  @media (min-width: 640px) { .grid2 { grid-template-columns: 1fr 1fr; } }
+  .grid3 { display: grid; gap: 10px; }
+  @media (min-width: 700px) { .grid3 { grid-template-columns: 1fr 1fr 1fr; } }
+  .card {
+    border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; background: #fafbfc;
+  }
+  .card h4 { font-size: .84rem; color: var(--primary); margin-bottom: 4px; }
+  .card p, .card li { font-size: .8rem; line-height: 1.5; color: #555; }
+  .card ul { padding-left: 1rem; margin-top: 4px; }
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 999px;
+    font-size: .68rem; font-weight: 700; margin-right: 4px; margin-bottom: 4px;
+  }
+  .b-ok { background: #e8f5e9; color: #2e7d32; }
+  .b-warn { background: #fff3e0; color: #ef6c00; }
+  .b-info { background: #e3f2fd; color: #1565c0; }
+  .b-muted { background: #eee; color: #666; }
+  table { width: 100%; border-collapse: collapse; font-size: .78rem; margin: 10px 0; }
+  th, td { border: 1px solid var(--border); padding: 8px; text-align: left; vertical-align: top; line-height: 1.45; }
+  th { background: #e8eef5; color: var(--primary); }
+  tr.highlight td { background: #e8f5e9; }
+  .talk-box {
+    background: #fff8e1; border: 1px solid #ffe082; border-radius: 10px;
+    padding: 12px 14px; margin: 10px 0;
+  }
+  .talk-box strong { color: #e65100; font-size: .82rem; }
+  .talk-box p { font-size: .88rem; margin-top: 6px; color: #444; }
+  .dont { background: #fce4ec; border-color: #f48fb1; }
+  .dont strong { color: #c62828; }
+  .nav-hint { font-size: .72rem; color: var(--muted); margin-top: 16px; text-align: center; }
+  code { font-size: .76rem; background: #eef2f7; padding: 1px 5px; border-radius: 3px; }
+  a.link { color: var(--primary); font-weight: 600; }
+
+  /* ── 底栏导航 ── */
+  .bottombar {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 200; height: 56px;
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    background: rgba(15,47,92,.95); border-top: 1px solid rgba(255,255,255,.08);
+  }
+  .bottombar button {
+    background: #2563b0; border: none; color: #fff; padding: 10px 24px;
+    border-radius: 8px; font-size: .88rem; font-weight: 700; cursor: pointer;
+  }
+  .bottombar button:disabled { opacity: .35; cursor: default; }
+  .bottombar button.ghost { background: rgba(255,255,255,.12); }
+  .thumb-strip {
+    position: fixed; right: 0; top: 48px; bottom: 56px; width: 52px; z-index: 150;
+    overflow-y: auto; padding: 8px 6px; background: rgba(15,47,92,.6);
+    display: none;
+  }
+  @media (min-width: 1100px) { .thumb-strip { display: block; } }
+  .thumb {
+    width: 36px; height: 24px; border-radius: 4px; background: rgba(255,255,255,.15);
+    margin-bottom: 6px; cursor: pointer; font-size: .6rem; color: rgba(255,255,255,.7);
+    display: flex; align-items: center; justify-content: center; border: 2px solid transparent;
+  }
+  .thumb.active { border-color: var(--gold); background: rgba(255,255,255,.25); color: #fff; }
+
+  /* ── 打印 = 全部幻灯片竖排 ── */
+  @media print {
+    html, body { height: auto; overflow: visible; background: #fff; }
+    .topbar, .bottombar, .thumb-strip, .nav-hint { display: none !important; }
+    .deck { position: static; inset: auto; padding: 0; display: block; }
+    .slide {
+      display: block !important; page-break-after: always;
+      box-shadow: none; border: 1px solid #ccc; margin-bottom: 20px;
+      max-height: none; overflow: visible;
+    }
+    .slide.tag-cover { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="brand" href="../search/index.html">← EdgeNexus</a>
+  <div class="progress-wrap"><div class="progress-bar" id="progress"></div></div>
+  <span class="slide-counter" id="counter">1 / 16</span>
+  <div class="ctrl">
+    <a class="btn-mini" href="../projects/index.html?id=fl-med-cecc">我的项目</a>
+    <button type="button" onclick="window.print()">打印 / 导出 PDF</button>
+  </div>
+</div>
+
+<div class="thumb-strip" id="thumbs"></div>
+
+<div class="deck" id="deck">
+
+<!-- ═══ SLIDE 1 封面 ═══ -->
+<section class="slide tag-cover active" data-title="封面">
+  <p style="opacity:.7;font-size:.85rem;letter-spacing:.12em">开学见导师 · 汇报稿</p>
+  <h1>云边协同研究<br>暑期梳理与开学对齐</h1>
+  <p class="sub">文献 · 复现 · 专利 · 会议 · WAIC · 自研项目<br>—— 聊什么、怎么聊、请老师拍什么板</p>
+  <p class="meta">刘泽 · 2026-08 · EdgeNexus 边云合智<br>按 ← → 或底部按钮翻页 · Ctrl+P 可导出 PDF</p>
+</section>
+
+<!-- ═══ SLIDE 2 30 秒开场 ═══ -->
+<section class="slide" data-title="30秒开场">
+  <h2>Slide 1 · 30 秒开场（背下来）</h2>
+  <div class="quote">「老师好。暑假我把云边协同方向系统梳了一遍：建了本地文献库、复现了 4 篇核心论文、对照了中美专利、看了 5 场产业/学术视频和 WAIC 2026，自己的医疗联邦项目也跑到 Phase 3。今天想跟您对齐三件事：主线是否继续精度约束下的联邦通信优化、第二篇应急信道稿怎么定位、以及下学期投稿与实验节奏。」</div>
+  <h3>语气要点</h3>
+  <ul>
+    <li><strong>先成果、后请教</strong>——不是「我不知道做什么」，而是「我做了很多，请您帮我定优先级」。</li>
+    <li><strong>数字要带一个</strong>——FedHACT 通信 −49%、影像出域 0 MB、CA-CECC 复现 88 分，任选其一佐证工作量。</li>
+    <li><strong>留钩子</strong>——结尾明确 3 个要问老师的问题（见 Slide 14）。</li>
+  </ul>
+</section>
+
+<!-- ═══ SLIDE 3 总览 ═══ -->
+<section class="slide" data-title="总览">
+  <h2>Slide 2 · 暑假「看过什么」总览</h2>
+  <p class="lead">一句话：从论文到代码到产业，把「云边协同」从抽象概念变成了可演示、可写稿、可延伸的研究链条。</p>
+  <div class="formula">文献库 → 论文复现 → 专利对照 → 会议视频 → WAIC 产业镜头 → 自研 FedHACT 系统</div>
+  <table>
+    <thead><tr><th>板块</th><th>做了什么</th><th>站内入口</th></tr></thead>
+    <tbody>
+      <tr><td>文献检索</td><td>本地 PDF 库索引 + 中科院分区 + 云边方向标注</td><td><code>/search/</code></td></tr>
+      <tr class="highlight"><td>复现案例</td><td>4 篇 · OJCTA / CA-CECC / IGTO / LMI+PPO · 闭环评分 72–88</td><td><code>/reproduce/</code></td></tr>
+      <tr><td>专利对照</td><td>IBM MEC 编排、动态云边调度、CNN 卸载等中美专利</td><td><code>/patents/</code></td></tr>
+      <tr><td>会议视频</td><td>5 场 · 云边大会 / 源网荷储 / OpenYurt / 大小模型 / 至控工控</td><td><code>/videos/</code></td></tr>
+      <tr><td>WAIC 2026</td><td>超节点 · 边端推理 · FlagOS · Agent 控制面</td><td><code>/waic/</code></td></tr>
+      <tr class="highlight"><td>项目管理</td><td>医疗联邦 FedHACT + CSI-FedHACT 延伸 · 投稿中</td><td><code>/projects/</code></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ═══ SLIDE 4 文献 ═══ -->
+<section class="slide" data-title="文献">
+  <h2>Slide 3 · 文献检索：建立了什么能力</h2>
+  <ul>
+    <li>把 <code>D:\刚需</code> 下散落的 PDF 建成<strong>可检索目录</strong>：标题、分区、是否云边方向、本地路径一键打开。</li>
+    <li>精读方向覆盖：<strong>MEC 卸载</strong>、<strong>编码辅助云边协作</strong>、<strong>博弈带宽分配</strong>、<strong>联邦+边缘通信</strong>、<strong>区块链安全协作</strong>等。</li>
+    <li>与复现案例联动：每篇复现都挂回原 PDF 和实验目录，形成「读→跑→对照」闭环。</li>
+  </ul>
+  <h3>跟老师可以这样说</h3>
+  <div class="talk-box">
+    <strong>话术</strong>
+    <p>「文献我不只摘抄摘要，而是按能否复现、是否一区、是否云边核心来筛。复现过的 4 篇我都写了闭环 checklist，知道哪里和原文还有 gap。」</p>
+  </div>
+  <h3>若老师追问</h3>
+  <p>推荐深聊：<strong>OJCTA（TMC'25 在线卸载）</strong>和 <strong>CA-CECC（TCOMM'25 编码协作）</strong>——一篇偏实时决策，一篇偏传输可靠性，和我的联邦通信优化互补。</p>
+</section>
+
+<!-- ═══ SLIDE 5 复现 ═══ -->
+<section class="slide" data-title="复现">
+  <h2>Slide 4 · 四篇论文复现（核心干货）</h2>
+  <table>
+    <thead><tr><th>案例</th><th>期刊</th><th>核心问题</th><th>闭环分</th><th>我得到的</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>OJCTA</strong></td><td>TMC'25 一区</td>
+        <td>Lyapunov 在线卸载 + 通信资源分配</td><td>72</td>
+        <td>学会把长期约束转实时优化；参数口径要和 Table I 严格对齐</td>
+      </tr>
+      <tr class="highlight">
+        <td><strong>CA-CECC</strong></td><td>TCOMM'25</td>
+        <td>MDS 编码 + 云广播 + 边缘协作传输</td><td>88</td>
+        <td>云边协作不仅是算力切分，还有<strong>传输层冗余与 Straggler</strong></td>
+      </tr>
+      <tr>
+        <td><strong>IGTO/GRAO</strong></td><td>博弈论带宽</td>
+        <td>云边博弈带宽分配与卸载</td><td>73</td>
+        <td>多主体利益不一致时，Stackelberg / 博弈框架怎么建</td>
+      </tr>
+      <tr>
+        <td><strong>LMI+PPO</strong></td><td>区块链 IoT</td>
+        <td>凸优化 + 强化学习安全边云协作</td><td>82</td>
+        <td>安全/治理层可以和算法层分开建模</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="nav-hint">诚实口径：都是「部分/接近闭环」，不夸大成完美复现——老师会更信任。</p>
+</section>
+
+<!-- ═══ SLIDE 6 专利 ═══ -->
+<section class="slide" data-title="专利">
+  <h2>Slide 5 · 专利对照：工程视角补什么</h2>
+  <div class="grid2">
+    <div class="card">
+      <h4>IBM · MEC–Network 协同编排</h4>
+      <p>算力部署与网络优化<strong>双向协商</strong>：不是单点卸载，而是编排接口 + SLA 联动。</p>
+    </div>
+    <div class="card">
+      <h4>国内 · 动态云边任务调度</h4>
+      <p>任务到云还是到边，是<strong>在线调度问题</strong>，要和负载、链路状态挂钩。</p>
+    </div>
+    <div class="card">
+      <h4>US · 跨边缘层级编排</h4>
+      <p>边缘不是一层，是<strong>层级拓扑</strong>上的工作负载迁移。</p>
+    </div>
+    <div class="card">
+      <h4>国内 · CNN 动态卸载</h4>
+      <p>深度学习任务卸载的典型专利表述——和我的医疗 CNN 场景直接相关。</p>
+    </div>
+  </div>
+  <div class="talk-box">
+    <strong>跟老师聊</strong>
+    <p>「论文偏算法最优，专利偏系统落地。我现在的 FedHACT 更像专利里的『可调度、可计量』——精度下限 τ、上下行字节分开算、含索引。」</p>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 7 视频 ═══ -->
+<section class="slide" data-title="会议视频">
+  <h2>Slide 6 · 五场会议 / 产业视频</h2>
+  <div class="grid2">
+    <div class="card"><h4>2023 云边协同大会</h4><p>国内云边协同政策与架构总览 · 学术–产业接口</p></div>
+    <div class="card"><h4>江行智能 · 源网荷储</h4><p>能源场景云边实时调度 · 和 MEC 时延约束同构</p></div>
+    <div class="card"><h4>智元 · OpenYurt 2026</h4><p>云原生边缘编排 · 具身/机器人 as a Node</p></div>
+    <div class="card"><h4>浙大 · 大小模型端云协同</h4><p>云训边推、HCI 场景 · 和 WAIC 叙事一致</p></div>
+    <div class="card"><h4>至控 · 工业控制系统</h4><p>vPLC + EIC + 5G/TSN · 硬实时 vs 我的医疗软实时</p></div>
+  </div>
+  <p style="margin-top:12px">价值：把「云边协同」从论文公式扩展到<strong>能源、机器人、工业控制</strong>三条产业线，答辩时能跨场景举例。</p>
+</section>
+
+<!-- ═══ SLIDE 8 WAIC ═══ -->
+<section class="slide" data-title="WAIC">
+  <h2>Slide 7 · WAIC 2026：产业镜头（必讲 1 分钟）</h2>
+  <div class="formula">云超节点 ↔ 边端推理 ↔ 异构软件栈 ↔ Agent 控制面</div>
+  <div class="grid2">
+    <div class="card">
+      <h4>相对往年换镜头</h4>
+      <ul>
+        <li>从「有没有边侧盒子」→「Token 工厂 + 超节点高并发推理」</li>
+        <li>从「云边训推闭环」→「Agent 7×24 推理驱动协同」</li>
+        <li>目标函数可加：Token 成本、电价、碳排（算电协同）</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>和我的研究映射</h4>
+      <ul>
+        <li>联邦医疗 = <strong>端侧优先 + 数据不出边</strong></li>
+        <li>CSI-FedHACT = 弱网/应急下的<strong>边端自治</strong></li>
+        <li>OJCTA/CA-CECC = 把「边服务器」换成「边端芯片/一体机」再讨论</li>
+      </ul>
+    </div>
+  </div>
+  <div class="talk-box">
+    <strong>一句话给老师</strong>
+    <p>「WAIC 让我确认：云边协同研究不能只停在 MEC 仿真，还要能解释产业为什么在推超节点和 FlagOS——我的论文定位是系统验证 + 约束重构，不是去拼超节点硬件。」</p>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 9 自研项目 ═══ -->
+<section class="slide" data-title="自研项目">
+  <h2>Slide 8 · 自研项目（汇报重心）</h2>
+  <p class="lead">基于联邦学习的云边协同医疗影像诊断系统优化研究</p>
+  <table>
+    <thead><tr><th>维度</th><th>结果</th><th>意义</th></tr></thead>
+    <tbody>
+      <tr class="highlight"><td>隐私</td><td>原始影像出域 <strong>0 MB</strong></td><td>架构级合规叙事</td></tr>
+      <tr><td>精度</td><td>LUNA16 联邦 <strong>94.15%</strong> / 集中 94.63%</td><td>满足 ≥95% 附近，可诚实报告 gap</td></tr>
+      <tr class="highlight"><td>通信</td><td>FedHACT vs FedAvg：<strong>−49%</strong> 总通信</td><td>主主张 Faster/Cheaper，不是更准</td></tr>
+      <tr><td>系统</td><td>桌面 GUI + platform 消融 + hospital MVP</td><td>可演示、可复现、可写 Artifact</td></tr>
+    </tbody>
+  </table>
+  <h3>FedHACT 是什么（30 秒版）</h3>
+  <p>在精度下限 τ 约束下，<strong>联立</strong>：选哪些边参与 · Top-K 稀疏上传（含索引字节）· 可选 FedProx。不是发明 Top-K，而是<strong>约束重构 + 可计量系统验证</strong>。</p>
+  <h3>延伸线</h3>
+  <p><span class="badge b-warn">进行中</span> CSI-FedHACT：应急信道（带宽/RTT/丢包）下的墙钟与完成率 · 第二篇投稿向《小型微型计算机系统》/《通信学报》</p>
+</section>
+
+<!-- ═══ SLIDE 10 研究地图 ═══ -->
+<section class="slide" data-title="研究地图">
+  <h2>Slide 9 · 我的研究地图（三条线）</h2>
+  <div class="grid3">
+    <div class="card">
+      <h4>① 主线 · 已写稿</h4>
+      <span class="badge b-ok">《计算机工程与应用》</span>
+      <ul>
+        <li>FedHACT + AccGuard</li>
+        <li>精度约束通信优化</li>
+        <li>LUNA16 + 五节点 Non-IID</li>
+        <li>定位：系统论文，非新优化器</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>② 延伸 · 通信向</h4>
+      <span class="badge b-warn">CSI-FedHACT</span>
+      <ul>
+        <li>应急信道轨迹</li>
+        <li>墙钟 / 完成率 / 重传</li>
+        <li>P3 消融已跑</li>
+        <li>和 FedCG / 应急通信文献差异化</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>③ 理论对照 · 复现积累</h4>
+      <span class="badge b-info">不单独成稿</span>
+      <ul>
+        <li>OJCTA → 在线卸载框架</li>
+        <li>CA-CECC → 传输可靠性</li>
+        <li>为 Related Work 和 Discussion 服务</li>
+      </ul>
+    </div>
+  </div>
+  <div class="formula">同一场景：医疗多院联合 · 数据不动 · 链路时变 · 要准还要省</div>
+</section>
+
+<!-- ═══ SLIDE 11 怎么聊 ═══ -->
+<section class="slide" data-title="怎么聊">
+  <h2>Slide 10 · 应该怎么和老师聊（结构）</h2>
+  <ol>
+    <li><strong>5 min · 总览</strong>：Slide 2 总表 + 一句话主线（FedHACT）</li>
+    <li><strong>10 min · 自研重点</strong>：打开 GUI 或 <a class="link" href="../projects/index.html?id=fl-med-cecc">项目页</a> · 讲清创新定位（不卖 Top-K 发明）</li>
+    <li><strong>5 min · 复现 & WAIC</strong>：各挑 1 个最熟的展开 · 其余说「有笔记可补充」</li>
+    <li><strong>10 min · 请教</strong>：Slide 14 三个问题 · 记录老师原话</li>
+    <li><strong>可选深聊</strong>：CSI 第二篇是否值得投一区通信刊 · 工业 vPLC 和医疗联邦的边界</li>
+  </ol>
+  <div class="grid2" style="margin-top:12px">
+    <div class="talk-box">
+      <strong>✅ 推荐说法</strong>
+      <p>「我诚实报告 trade-off：通信降 49% 换 0.5 pp 精度，n=30 seed 下显著。定位 Faster/Cheaper。」</p>
+      <p style="margin-top:6px">「复现 CA-CECC 88 分，我知道 gap 在哪，可以改但不抢毕业论文主线。」</p>
+    </div>
+    <div class="talk-box dont">
+      <strong>❌ 避免说法</strong>
+      <p>「我都复现完美了。」—— 会被追问参数表。</p>
+      <p style="margin-top:6px">「我发明了联邦学习。」—— 创新点会被打回。</p>
+      <p style="margin-top:6px">「WAIC 看了很多但没总结。」—— 已有手册和站内笔记。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 12 聊什么清单 ═══ -->
+<section class="slide" data-title="聊什么">
+  <h2>Slide 11 · 聊什么（话题清单）</h2>
+  <table>
+    <thead><tr><th>话题</th><th>你准备的内容</th><th>期望老师给什么</th></tr></thead>
+    <tbody>
+      <tr class="highlight">
+        <td><strong>毕业论文主线</strong></td>
+        <td>FedHACT 系统 + 医疗场景 + 可复现实验</td>
+        <td>是否足够毕业 · 要不要加理论章节</td>
+      </tr>
+      <tr>
+        <td><strong>第一篇投稿</strong></td>
+        <td>《计算机工程与应用》稿 · 审稿意见 4 轮修改中</td>
+        <td>投稿节奏 · 是否改投他刊</td>
+      </tr>
+      <tr class="highlight">
+        <td><strong>第二篇 CSI 稿</strong></td>
+        <td>应急信道 + 墙钟指标 · 与第一篇边界</td>
+        <td>算大论文一章还是独立小论文</td>
+      </tr>
+      <tr>
+        <td><strong>实验深度</strong></td>
+        <td>LUNA16 仅 subset0 · 合成 vs 真实</td>
+        <td>要不要扩数据 · 要不要临床合作</td>
+      </tr>
+      <tr>
+        <td><strong>与 WAIC 产业结合</strong></td>
+        <td>超节点/Agent 叙事</td>
+        <td>Discussion 写多少产业 · 会不会被评「不够学术」</td>
+      </tr>
+      <tr>
+        <td><strong>复现工作去向</strong></td>
+        <td>4 篇复现代码</td>
+        <td>是否整理成组内工具 · 是否值得发复现短文</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ═══ SLIDE 13 演示 ═══ -->
+<section class="slide" data-title="演示">
+  <h2>Slide 12 · 见面演示清单（带什么）</h2>
+  <div class="grid2">
+    <div class="card">
+      <h4>🖥️ 本地站点（主推荐）</h4>
+      <ul>
+        <li>启动：<code>search/open.bat</code></li>
+        <li>汇报页：<code>/briefing/</code>（本页）</li>
+        <li>项目页：<code>/projects/?id=fl-med-cecc</code></li>
+        <li>复现：<code>/reproduce/</code></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>🎬  live 演示（二选一）</h4>
+      <ul>
+        <li><code>python -m app.main</code> · 联邦训练台一键对比</li>
+        <li><code>python platform/desktop_app.py</code> · FedHACT 消融日志</li>
+      </ul>
+    </div>
+  </div>
+  <h3>时间不够就只演示 3 分钟</h3>
+  <ol>
+    <li>打开 GUI → 选 LUNA16 → 一键对比 → 指出「出域 0 MB」</li>
+    <li>打开项目页 → FedHACT −49% 表</li>
+    <li>本页 Slide 14 → 直接请教</li>
+  </ol>
+</section>
+
+<!-- ═══ SLIDE 14 三个问题 ═══ -->
+<section class="slide" data-title="三个问题">
+  <h2>Slide 13 · 请老师拍板的三个问题（核心）</h2>
+  <div class="card" style="margin-bottom:12px;border-color:#90caf9;background:#f5f9ff">
+    <h4>问题 1 · 主线确认</h4>
+    <p>「老师，我毕业论文是否就以 <strong>FedHACT + 医疗云边联邦系统</strong> 为主线？CSI 应急信道作为核心一章还是独立第二篇小论文？」</p>
+  </div>
+  <div class="card" style="margin-bottom:12px;border-color:#90caf9;background:#f5f9ff">
+    <h4>问题 2 · 创新口径</h4>
+    <p>「我现在的卖点是 <strong>精度约束下的通信—时延联立控制 + 可计量系统</strong>，不宣称发明 Top-K/FedProx。这个定位在咱们组里是否站得住？要不要补收敛性或更强理论？」</p>
+  </div>
+  <div class="card" style="border-color:#90caf9;background:#f5f9ff">
+    <h4>问题 3 · 下学期节奏</h4>
+    <p>「接下来 3 个月您希望我优先：<strong>A</strong> 改投/修第一篇 · <strong>B</strong> 冲 CSI 第二篇实验 · <strong>C</strong> 扩 LUNA/临床数据 · <strong>D</strong> 深化某篇复现？我按您的优先级排期。」</p>
+  </div>
+  <p class="nav-hint">见面时把老师回答记在 Slide 15 空白区或手机备忘录。</p>
+</section>
+
+<!-- ═══ SLIDE 15 下学期计划 ═══ -->
+<section class="slide" data-title="下学期计划">
+  <h2>Slide 14 · 下学期计划（主动提，不要等分配）</h2>
+  <table>
+    <thead><tr><th>时间</th><th>计划</th><th>交付物</th></tr></thead>
+    <tbody>
+      <tr><td>9 月</td><td>第一篇根据老师意见修改 / 定稿投稿</td><td>修改稿 + 回复信</td></tr>
+      <tr><td>10 月</td><td>CSI-FedHACT P4 实验补全 + 第二篇初稿</td><td>墙钟/完成率主表</td></tr>
+      <tr><td>11 月</td><td>毕业论文开题/中期材料 · 章节大纲</td><td>第三/four章与已投稿对齐</td></tr>
+      <tr><td>12 月</td><td>组会可复现 Demo + 消融表冻结</td><td>Artifact 文档</td></tr>
+    </tbody>
+  </table>
+  <div class="talk-box">
+    <strong>主动总结句</strong>
+    <p>「我想把暑假的『看过』变成学期的『产出』：至少 1 篇录用/在审 + 大论文框架定稿 + 可演示系统不丢。」</p>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 16 老师可能问 ═══ -->
+<section class="slide" data-title="Q&A">
+  <h2>Slide 15 · 老师可能会问 · 你怎么答</h2>
+  <table>
+    <thead><tr><th>老师可能问</th><th>建议回答</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>「联邦 94% 够吗？临床能用吗？」</td>
+        <td>「定位是<strong>系统验证原型</strong>，不是三类证医疗产品。LUNA16 补丁级任务，诚实报告与集中式差 0.5 pp，强调隐私—通信 trade-off。」</td>
+      </tr>
+      <tr>
+        <td>「和 FedProx / FedCG 有什么区别？」</td>
+        <td>「组件非首创；增量是 τ 约束、上下行+索引计量、选边—稀疏—近端<strong>联立消融</strong>、 hospital MVP 可复现。」</td>
+      </tr>
+      <tr>
+        <td>「复现意义何在？」</td>
+        <td>「四篇覆盖 MEC/编码/博弈/安全四条线，为 Related Work 和 Discussion 提供<strong>可运行对照</strong>，不是毕业论文主体。」</td>
+      </tr>
+      <tr>
+        <td>「WAIC 和你的关系？」</td>
+        <td>「产业解释为什么边侧自治和 Token 分流重要；我的医疗场景是 OT 侧合规闭环，不做超节点硬件。」</td>
+      </tr>
+      <tr>
+        <td>「下一步最难的是什么？」</td>
+        <td>「第二篇若投通信刊，需要<strong>墙钟实验更硬</strong>；若进大论文，要防止两稿自我重复。请老师定边界。」</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ═══ SLIDE 17 收尾 ═══ -->
+<section class="slide tag-cover" data-title="收尾" style="background:linear-gradient(145deg,#1b5e20,#2e7d32 50%,#43a047)">
+  <p style="opacity:.8;font-size:.85rem">Slide 16 · 收尾</p>
+  <h1 style="font-size:1.8rem">谢谢老师<br>请您帮我定优先级</h1>
+  <p class="sub" style="margin-top:20px">
+    暑期我把云边协同从「读过」变成了「跑过、记过、能演示」。<br>
+    下学期按您的答案聚焦产出。
+  </p>
+  <p class="meta" style="margin-top:32px">
+    笔记本本地：<code style="background:rgba(0,0,0,.2);padding:4px 10px;border-radius:6px">http://127.0.0.1:8765/briefing/</code><br>
+    项目路径：<code style="background:rgba(0,0,0,.2);padding:4px 10px;border-radius:6px">D:\刚需\实验\WAIC\基于联邦学习的云边协同医疗影像诊断系统优化研究</code>
+  </p>
+</section>
+
+</div><!-- deck -->
+
+<div class="bottombar">
+  <button type="button" class="ghost" id="btnPrev" disabled>← 上一页</button>
+  <button type="button" id="btnNext">下一页 →</button>
+</div>
+
+<script>
+const slides = [...document.querySelectorAll('.slide')];
+const total = slides.length;
+let cur = 0;
+
+const counter = document.getElementById('counter');
+const progress = document.getElementById('progress');
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const thumbs = document.getElementById('thumbs');
+
+slides.forEach((s, i) => {
+  const t = document.createElement('div');
+  t.className = 'thumb' + (i === 0 ? ' active' : '');
+  t.textContent = i + 1;
+  t.title = s.dataset.title || ('Slide ' + (i + 1));
+  t.onclick = () => go(i);
+  thumbs.appendChild(t);
+});
+
+function go(n) {
+  if (n < 0 || n >= total) return;
+  slides[cur].classList.remove('active');
+  thumbs.children[cur].classList.remove('active');
+  cur = n;
+  slides[cur].classList.add('active');
+  thumbs.children[cur].classList.add('active');
+  counter.textContent = (cur + 1) + ' / ' + total;
+  progress.style.width = ((cur + 1) / total * 100) + '%';
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === total - 1;
+  slides[cur].scrollTop = 0;
+}
+
+btnPrev.onclick = () => go(cur - 1);
+btnNext.onclick = () => go(cur + 1);
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); go(cur + 1); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(cur - 1); }
+  if (e.key === 'Home') go(0);
+  if (e.key === 'End') go(total - 1);
+});
+
+go(0);
+</script>
+</body>
+</html>

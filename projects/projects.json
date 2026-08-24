@@ -1,0 +1,221 @@
+{
+  "updated": "2026-08-24",
+  "projects": [
+    {
+      "id": "fl-med-cecc",
+      "title": "基于联邦学习的云边协同医疗影像诊断系统优化研究",
+      "short": "联邦学习 · 云边协同 · 肺部 CT 辅助诊断",
+      "status": "active",
+      "status_label": "在研 · 系统验证 + 投稿",
+      "phase": "Phase 3（FedHACT / AccGuard / 医院 MVP）→ 应急信道 CSI-FedHACT 延伸",
+      "root_path": "D:\\刚需\\实验\\WAIC\\基于联邦学习的云边协同医疗影像诊断系统优化研究",
+      "parent_folder": "D:\\刚需\\实验\\WAIC",
+      "summary": "在原始医疗影像不出域的前提下，用联邦学习 + 云边协同完成肺部 CT 辅助诊断建模。主线：边缘本地训练、云端聚合参数；FedHACT 联立选边、Top-K 稀疏上传与 FedProx，在精度约束下优化通信—时延；配套桌面答辩 GUI、科研验证平台（cefl/platform）与医院形态 MVP。延伸方向：应急信道感知的 CSI-FedHACT（通信向第二篇）。",
+      "one_liner": "数据不动、模型动——云边联邦在精度下限 τ 下做通信—时延联合优化，原始影像出域 0 MB。",
+      "tags": [
+        "联邦学习",
+        "云边协同",
+        "医疗影像",
+        "FedHACT",
+        "AccGuard",
+        "LUNA16",
+        "Non-IID"
+      ],
+      "metrics": {
+        "headline": "核心实验结论（README / metrics 汇总）",
+        "rows": [
+          {
+            "metric": "测试准确率（合成数据 · FedAvg）",
+            "centralized": "99.70%",
+            "federated": "99.90%",
+            "note": "均 ≥95% 目标"
+          },
+          {
+            "metric": "原始影像出域",
+            "centralized": "56.25 MB",
+            "federated": "0 MB",
+            "note": "架构级隐私优势"
+          },
+          {
+            "metric": "LUNA16 真实补丁（优化后）",
+            "centralized": "94.63%",
+            "federated": "94.15%",
+            "note": "F1≈94.5%；相对优化前 ~85% 明显提升"
+          },
+          {
+            "metric": "FedHACT vs FedAvg（50 轮 · 通信）",
+            "centralized": "—",
+            "federated": "通信 −49%（上行约 −58%）",
+            "note": "精度约低 0.5 pp；主主张 Faster/Cheaper"
+          }
+        ]
+      },
+      "architecture": {
+        "layers": [
+          {
+            "name": "云化管控层",
+            "role": "联邦编排、模型聚合、全局策略与审计",
+            "components": ["cefl/cloud/server.py", "platform 桌面控制台", "hospital/cloud JWT 鉴权"]
+          },
+          {
+            "name": "网络协同层",
+            "role": "参数增量上传（Top-K + 索引计量）、可选应急信道模型",
+            "components": ["cefl/common/channel.py", "应急信道轨迹 YAML", "5G/专网抽象"]
+          },
+          {
+            "name": "边缘智控层",
+            "role": "本地训练 + 边侧推理；影像留院",
+            "components": ["cefl/edge/client.py", "LungCTNet CNN", "hospital/edge 推理服务"]
+          }
+        ],
+        "methods": [
+          "FedAvg 基线 · 五节点 Non-IID（Dirichlet α）",
+          "FedHACT：选边 + Top-K 稀疏 + FedProx 可消融联立",
+          "AccGuard：可选精度护栏（在线自适应，如实报告通信代价）",
+          "CSI-FedHACT：信道状态驱动的选边与稀疏比（延伸稿）"
+        ]
+      },
+      "modules": [
+        {
+          "name": "桌面答辩 GUI",
+          "path": "app/",
+          "cmd": "python -m app.main",
+          "desc": "CustomTkinter：系统总览、联邦训练台、诊断工作台、结果中心；数据源可选合成 / LUNA16。"
+        },
+        {
+          "name": "核心训练库",
+          "path": "src/",
+          "cmd": "python -u experiments/run_comparison.py",
+          "desc": "LungCTNet、合成/LUNA 数据、集中式 vs FedAvg 一键对比。"
+        },
+        {
+          "name": "科研验证平台",
+          "path": "platform/ + cefl/",
+          "cmd": "python platform/desktop_app.py",
+          "desc": "本机多进程/Docker 云边联邦；FedHACT 消融、Non-IID 三档、等预算对比、AccGuard、DP 探针。"
+        },
+        {
+          "name": "医院形态 MVP",
+          "path": "hospital/",
+          "cmd": "python -m hospital.cloud.app  # :8200",
+          "desc": "JWT 鉴权、Mock PACS、边推理 :8201、审计与模型仓库；科研/试点原型，非临床注册产品。"
+        },
+        {
+          "name": "应急信道延伸",
+          "path": "research/应急信道感知云边联邦/",
+          "cmd": "python research/应急信道感知云边联邦/scripts/run_p3_sweep.py --reuse-existing",
+          "desc": "CSI-FedHACT：时变带宽/RTT/丢包下的墙钟与完成率；投稿《小型微型计算机系统》/《通信学报》向。"
+        }
+      ],
+      "milestones": [
+        {
+          "date": "2026-07",
+          "title": "Phase 3 升级批跑",
+          "status": "done",
+          "note": "FedHACT 通信 −49%；Standalone +8.6 pp；见 results/platform_runs/upgrade/"
+        },
+        {
+          "date": "2026-07",
+          "title": "医院 MVP 与 Artifact",
+          "status": "done",
+          "note": "hospital/ 鉴权+边推理；docs/ARTIFACT.md 一键复现摘要"
+        },
+        {
+          "date": "2026-08",
+          "title": "《计算机工程与应用》投稿稿",
+          "status": "in_progress",
+          "note": "docs/投稿_计算机工程与应用.md · FedHACT 主结果 + 可计量通信"
+        },
+        {
+          "date": "2026-08",
+          "title": "CSI-FedHACT 延伸（应急信道）",
+          "status": "in_progress",
+          "note": "P3 对照/消融已跑；小微型/通信学报草稿在 research/应急信道感知云边联邦/docs/"
+        }
+      ],
+      "docs": [
+        {
+          "path": "docs/论文.md",
+          "role": "完整学术论文正文"
+        },
+        {
+          "path": "docs/系统设计.md",
+          "role": "云边协同架构与数据流"
+        },
+        {
+          "path": "docs/研究总结.md",
+          "role": "答辩口径与创新定位"
+        },
+        {
+          "path": "docs/投稿_计算机工程与应用.md",
+          "role": "投稿版摘要与 FedHACT 主表"
+        },
+        {
+          "path": "docs/fedhact_formal.md",
+          "role": "FedHACT 形式化与伪代码"
+        },
+        {
+          "path": "docs/医联体场景与合规映射.md",
+          "role": "医联体场景与合规映射"
+        },
+        {
+          "path": "research/应急信道感知云边联邦/docs/草稿_小型微型计算机系统_CSI-FedHACT.md",
+          "role": "应急信道向第二篇初稿"
+        }
+      ],
+      "figures": [
+        {
+          "path": "results/figures/architecture.png",
+          "caption": "云边协同联邦学习架构示意"
+        },
+        {
+          "path": "results/figures/accuracy_curve.png",
+          "caption": "集中式 vs 联邦准确率曲线"
+        },
+        {
+          "path": "results/figures/comm_privacy.png",
+          "caption": "通信开销与原始数据暴露对比"
+        },
+        {
+          "path": "results/figures/metrics_compare.png",
+          "caption": "Accuracy / Precision / Recall / F1 / Specificity"
+        }
+      ],
+      "how_to_run": [
+        "cd /d D:\\刚需\\实验\\WAIC\\基于联邦学习的云边协同医疗影像诊断系统优化研究",
+        "pip install -r requirements.txt",
+        "python -m app.main",
+        "python -u experiments/run_comparison.py --n-samples 5000 --rounds 15 --local-epochs 3",
+        "pip install -r platform/requirements.txt && python platform/scripts/run_ablation_batch.py"
+      ],
+      "research_bridge": [
+        {
+          "topic": "与 WAIC 云边叙事",
+          "link": "边端优先 + 隐私本地闭环 ↔ 医疗影像不出域；Token/超节点是云侧算力故事，本项目是 OT 侧实时+合规故事。"
+        },
+        {
+          "topic": "与复现案例（MEC/CECC）",
+          "link": "OJCTA/CA-CECC 优化通信资源与卸载；本项目优化联邦参数上传与选边，约束从队列时延换成 Acc≥τ 与索引字节计量。"
+        },
+        {
+          "topic": "与至控工业控制",
+          "link": "工业 vPLC 云化 vs 医疗「模型云聚、数据留边」；共同点是云边分工与确定性/合规约束，对象不同（控制回路 vs 诊断模型）。"
+        }
+      ],
+      "links": [
+        {
+          "label": "WAIC 学习笔记（本站）",
+          "url": "../waic/index.html"
+        },
+        {
+          "label": "复现案例 · 边云卸载对照",
+          "url": "../reproduce/index.html"
+        },
+        {
+          "label": "LUNA16 · Zenodo Part1",
+          "url": "https://zenodo.org/records/3723295"
+        }
+      ]
+    }
+  ]
+}

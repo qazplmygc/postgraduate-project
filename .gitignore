@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Temp / preview (keep repo small for free hosting)
+videos/files/_wp_preview/
+videos/files/_whitepaper_extract.txt
+**/_template_*
+**/*.log
+
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+
+# Optional: large PDFs — remove line below if you commit whitepaper to GitHub
+# videos/files/*.pdf

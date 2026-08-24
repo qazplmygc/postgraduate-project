@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>会议视频 · EdgeNexus 边云合智</title>
+<link rel="icon" href="../search/assets/favicon.svg" type="image/svg+xml">
+<script src="../search/assets/site.js"></script>
+<style>
+  :root {
+    --bg: #f0f4f8; --card: #fff; --primary: #1a478a; --accent: #2e7d32;
+    --text: #333; --muted: #888; --border: #dde3ea;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .site-nav {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 28px; height: 52px; background: #0f2f5c;
+  }
+  .site-nav .brand { display: inline-flex; align-items: center; gap: 10px; color: #fff; font-weight: 700; text-decoration: none; }
+  .site-nav .brand img { width: 28px; height: 28px; border-radius: 7px; }
+  .site-nav .links { display: flex; gap: 6px; flex-wrap: wrap; }
+  .site-nav .links a {
+    color: rgba(255,255,255,.78); text-decoration: none; font-size: .9rem; font-weight: 600;
+    padding: 8px 14px; border-radius: 8px;
+  }
+  .site-nav .links a:hover { background: rgba(255,255,255,.1); color: #fff; }
+  .site-nav .links a.active { background: rgba(255,255,255,.16); color: #fff; }
+  header { background: linear-gradient(135deg, #1a478a, #2563b0); color: #fff; padding: 28px 32px; }
+  header h1 { font-size: 1.5rem; }
+  header p { opacity: .9; margin-top: 8px; max-width: 900px; line-height: 1.55; font-size: .95rem; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 22px 20px 48px; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px; margin-bottom: 14px;
+  }
+  .card h2 { font-size: 1.2rem; color: var(--primary); }
+  .meta { font-size: .84rem; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+  .badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: .72rem; font-weight: 700; }
+  .b-watch { background: #e8f5e9; color: #2e7d32; }
+  .b-year { background: #e3f2fd; color: #1565c0; }
+  .section-title {
+    font-size: 1.02rem; font-weight: 700; color: var(--primary);
+    margin: 22px 0 10px; padding-left: 10px; border-left: 4px solid var(--accent);
+  }
+  .summary { font-size: .92rem; line-height: 1.7; color: #444; }
+  .watch-grid { display: grid; gap: 10px; }
+  .watch-item {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px; background: #fff;
+  }
+  .watch-item.primary { border-color: #90caf9; background: #f5f9ff; }
+  .watch-item h4 { font-size: .92rem; color: var(--primary); }
+  .watch-item p { font-size: .8rem; color: var(--muted); margin-top: 4px; max-width: 640px; line-height: 1.45; }
+  .btn {
+    display: inline-block; padding: 8px 14px; border-radius: 8px; font-size: .84rem; font-weight: 700;
+    text-decoration: none; color: #fff; background: var(--primary); white-space: nowrap;
+  }
+  .btn:hover { background: #2563b0; }
+  .btn.ghost { background: #fff; color: var(--primary); border: 1px solid #bbdefb; }
+  .btn.ghost:hover { background: #e3f2fd; }
+  .player {
+    margin-top: 10px; width: 100%; aspect-ratio: 16/9; border: 0; border-radius: 10px;
+    background: #000; display: none;
+  }
+  .player.show { display: block; }
+  .list { padding-left: 1.1rem; }
+  .list li { font-size: .88rem; line-height: 1.65; margin-bottom: 4px; color: #444; }
+  .hl { margin-bottom: 12px; }
+  .hl h4 { font-size: .9rem; color: var(--primary); margin-bottom: 4px; }
+  .muted { color: var(--muted); font-size: .8rem; }
+  .err { color: #c62828; padding: 20px; }
+  .wp-box { background: #f8fafc; border: 1px dashed #90caf9; border-radius: 10px; padding: 12px 14px; margin-top: 10px; }
+  .wp-box h4 { font-size: .88rem; color: var(--primary); margin-bottom: 6px; }
+  video.local-player { width: 100%; max-height: 480px; border-radius: 10px; margin-top: 10px; background: #000; display: none; }
+  video.local-player.show { display: block; }
+</style>
+</head>
+<body>
+<nav class="site-nav" aria-label="站点导航">
+  <a class="brand" href="../search/index.html">
+    <img src="../search/assets/favicon.svg" alt="">
+    <span>EdgeNexus · 边云合智</span>
+  </a>
+  <div class="links">
+    <a href="../search/index.html">文献检索</a>
+    <a href="../patents/index.html">专利对照</a>
+    <a href="../reproduce/index.html">复现案例</a>
+    <a href="index.html" class="active">会议视频</a>
+    <a href="../projects/index.html">项目管理</a>
+    <a href="../briefing/index.html">开学汇报</a>
+    <a href="../waic/index.html">WAIC 学习</a>
+  </div>
+</nav>
+<header>
+  <h1>会议视频 · 看过的会与可点播链接</h1>
+  <p>记录云边相关会议与单场演讲，附分析要点；含 2023 云边协同大会、江行智能、智元 OpenYurt、浙大张圣宇、至控科技工业控制系统白皮书等。</p>
+</header>
+<div class="wrap" id="app"><p class="muted">加载中…</p></div>
+<script>
+async function main() {
+  const app = document.getElementById('app');
+  let data;
+  try {
+    const r = await fetch('videos.json?_=' + Date.now());
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    data = await r.json();
+  } catch (e) {
+    app.innerHTML = '<p class="err">无法加载 videos.json。请用本地服务打开：http://127.0.0.1:8765/videos/</p>';
+    return;
+  }
+  const id = new URLSearchParams(location.search).get('id');
+  if (id) {
+    const ev = data.events.find(x => x.id === id);
+    if (!ev) { app.innerHTML = '<p class="err">未找到会议</p>'; return; }
+    app.innerHTML = renderDetail(ev);
+    wirePlayers();
+    return;
+  }
+  app.innerHTML = renderList(data);
+}
+
+function renderList(data) {
+  let h = `<p class="muted">更新 ${esc(data.updated)} · ${data.events.length} 场</p>`;
+  for (const ev of data.events) {
+    const primary = (ev.watch || []).find(w => w.role === 'primary') || (ev.watch || [])[0];
+    h += `<article class="card">
+      <div class="badges">
+        ${ev.watched ? '<span class="badge b-watch">已观看</span>' : ''}
+        <span class="badge b-year">${esc(ev.date)}</span>
+      </div>
+      <h2><a href="?id=${encodeURIComponent(ev.id)}" style="color:inherit;text-decoration:none">${esc(ev.title)}</a></h2>
+      <div class="meta">主题：${esc(ev.theme)} · ${esc(ev.venue)}</div>
+      <p class="summary" style="margin-top:10px">${esc(ev.summary)}</p>
+      <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px">
+        <a class="btn" href="${esc(primary.url)}" target="_blank" rel="noopener">立即观看 · ${esc(primary.platform)}</a>
+        <a class="btn ghost" href="?id=${encodeURIComponent(ev.id)}">分析与全部链接</a>
+      </div>
+    </article>`;
+  }
+  return h;
+}
+
+function renderDetail(ev) {
+  let h = `<a class="back" href="index.html">← 全部会议</a>
+  <div class="card">
+    <div class="badges">
+      ${ev.watched ? '<span class="badge b-watch">已观看</span>' : ''}
+      <span class="badge b-year">${esc(ev.date)}</span>
+    </div>
+    <h2>${esc(ev.title)}</h2>
+    <div class="meta">主题：${esc(ev.theme)}<br>地点：${esc(ev.venue)}<br>主办：${esc((ev.organizers||[]).join(' · '))}${ev.speaker ? '<br>演讲：' + esc(ev.speaker) + (ev.slot ? ' · ' + esc(ev.slot) : '') : ''}</div>
+    <p class="summary" style="margin-top:12px">${esc(ev.summary)}</p>
+  </div>`;
+
+  h += `<h3 class="section-title">点击观看</h3><div class="watch-grid">`;
+  for (const w of (ev.watch || [])) {
+    const cls = w.role === 'primary' ? 'watch-item primary' : 'watch-item';
+    let btn = `<a class="btn" href="${esc(w.url)}" target="_blank" rel="noopener">${w.local_pdf ? '打开 PDF' : '立即观看'}</a>`;
+    let extra = '';
+    if (w.embed && w.bvid) {
+      btn = `<button type="button" class="btn" data-bvid="${esc(w.bvid)}">本页播放</button>
+         <a class="btn ghost" href="${esc(w.url)}" target="_blank" rel="noopener">B 站打开</a>`;
+      extra = `<iframe class="player" id="player-${esc(w.bvid)}" allowfullscreen allow="fullscreen; encrypted-media"></iframe>`;
+    } else if (w.local_video) {
+      btn = `<button type="button" class="btn" data-local-video="${esc(w.local_video)}">本页播放</button>
+         <a class="btn ghost" href="${esc(w.url)}" target="_blank" rel="noopener">官网打开</a>`;
+      extra = `<video class="local-player" id="local-${esc(w.local_video.replace(/[^a-zA-Z0-9_-]/g,'_'))}" controls preload="metadata" src="${esc(w.local_video)}"></video>`;
+    }
+    h += `<div class="${cls}">
+      <div>
+        <h4>${esc(w.label)}</h4>
+        <p>${esc(w.platform)} · ${esc(w.note || '')}</p>
+        ${extra}
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">${btn}</div>
+    </div>`;
+  }
+  h += `</div>`;
+
+  if (ev.whitepaper) {
+    const wp = ev.whitepaper;
+    const staticPdf = wp.local_pdf && window.EdgeNexus
+      ? EdgeNexus.staticAssetUrl('videos/' + wp.local_pdf)
+      : (wp.local_pdf || '');
+    const apiPdf = wp.api_pdf && window.EdgeNexus ? EdgeNexus.pdfApiUrl(wp.api_pdf) : '';
+    h += `<h3 class="section-title">白皮书分析 · ${esc(wp.title)}</h3>
+      <div class="card">
+        <p class="summary"><strong>${esc(wp.title)}</strong>（${esc(wp.edition || '')}）</p>
+        <p class="meta" style="margin-top:6px">牵头：${esc(wp.lead || '')}<br>联合编写：${esc((wp.coauthors||[]).join('、'))}<br>发布：${esc(wp.published || '')}</p>
+        ${wp.local_pdf ? `<p style="margin-top:10px">${staticPdf ? `<a class="btn" href="${esc(staticPdf)}" target="_blank" rel="noopener">打开 PDF</a>` : ''}
+          ${apiPdf ? `<a class="btn ghost" href="${esc(apiPdf)}" target="_blank" rel="noopener">本地 API 打开</a>` : ''}</p>` : ''}
+        <p class="summary" style="margin-top:12px">${esc(wp.summary || '')}</p>
+      </div>`;
+    for (const block of (wp.analysis || [])) {
+      h += `<div class="card hl"><h4>${esc(block.title)}</h4><ul class="list">${(block.points||[]).map(p => `<li>${esc(p)}</li>`).join('')}</ul></div>`;
+    }
+  }
+
+  h += `<h3 class="section-title">会场结构</h3><div class="card">
+    <p class="summary"><strong>上午：</strong>${esc(ev.structure.morning)}</p>
+    <p class="summary" style="margin-top:8px"><strong>下午分论坛：</strong></p>
+    <ul class="list">${(ev.structure.afternoon||[]).map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+  </div>`;
+
+  h += `<h3 class="section-title">内容要点</h3>`;
+  for (const block of (ev.highlights || [])) {
+    h += `<div class="card hl"><h4>${esc(block.title)}</h4><ul class="list">${block.points.map(p => `<li>${esc(p)}</li>`).join('')}</ul></div>`;
+  }
+
+  h += `<h3 class="section-title">对云边协同研究的分析</h3><div class="card">
+    <ul class="list">${(ev.analysis.for_research||[]).map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+  </div>
+  <div class="card"><h4 style="color:var(--primary);margin-bottom:6px">可带走的结论</h4>
+    <ul class="list">${(ev.analysis.takeaways||[]).map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+  </div>`;
+
+  return h;
+}
+
+function wirePlayers() {
+  document.querySelectorAll('[data-bvid]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-bvid');
+      const frame = document.getElementById('player-' + id);
+      if (!frame) return;
+      frame.src = `https://player.bilibili.com/player.html?bvid=${encodeURIComponent(id)}&high_quality=1&danmaku=0`;
+      frame.classList.add('show');
+      frame.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  });
+  document.querySelectorAll('[data-local-video]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const src = btn.getAttribute('data-local-video');
+      const id = 'local-' + src.replace(/[^a-zA-Z0-9_-]/g, '_');
+      const v = document.getElementById(id);
+      if (!v) return;
+      v.classList.add('show');
+      v.play().catch(() => {});
+      v.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  });
+}
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+main();
+</script>
+</body>
+</html>

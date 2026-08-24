@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WAIC 学习 · EdgeNexus 边云合智</title>
+<link rel="icon" href="../search/assets/favicon.svg" type="image/svg+xml">
+<script src="../search/assets/site.js"></script>
+<style>
+  :root {
+    --bg: #f0f4f8; --card: #fff; --primary: #1a478a; --accent: #2e7d32;
+    --text: #333; --muted: #888; --border: #dde3ea;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .site-nav {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 28px; height: 52px; background: #0f2f5c;
+  }
+  .site-nav .brand { display: inline-flex; align-items: center; gap: 10px; color: #fff; font-weight: 700; text-decoration: none; }
+  .site-nav .brand img { width: 28px; height: 28px; border-radius: 7px; }
+  .site-nav .links { display: flex; gap: 6px; flex-wrap: wrap; }
+  .site-nav .links a {
+    color: rgba(255,255,255,.78); text-decoration: none; font-size: .9rem; font-weight: 600;
+    padding: 8px 14px; border-radius: 8px;
+  }
+  .site-nav .links a:hover { background: rgba(255,255,255,.1); color: #fff; }
+  .site-nav .links a.active { background: rgba(255,255,255,.16); color: #fff; }
+  header { background: linear-gradient(135deg, #0f2f5c, #1a478a 45%, #2563b0); color: #fff; padding: 28px 32px; }
+  header h1 { font-size: 1.5rem; }
+  header p { opacity: .92; margin-top: 8px; max-width: 920px; line-height: 1.55; font-size: .95rem; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 22px 20px 48px; }
+  .section-title {
+    font-size: 1.02rem; font-weight: 700; color: var(--primary);
+    margin: 26px 0 10px; padding-left: 10px; border-left: 4px solid var(--accent);
+  }
+  .panel {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 18px; margin-bottom: 12px;
+  }
+  .panel h3 { font-size: .95rem; color: var(--primary); margin-bottom: 8px; }
+  .panel p, .panel li { font-size: .88rem; line-height: 1.65; color: #444; }
+  .panel ul { padding-left: 1.15rem; }
+  .formula {
+    margin-top: 12px; padding: 12px 14px; border-radius: 10px;
+    background: #eef5ff; border: 1px solid #bbdefb;
+    font-weight: 700; color: var(--primary); font-size: .95rem; text-align: center;
+  }
+  .meta { font-size: .84rem; color: var(--muted); line-height: 1.5; margin-top: 6px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: .72rem; font-weight: 700; background: #e3f2fd; color: #1565c0; }
+  .badge.green { background: #e8f5e9; color: #2e7d32; }
+  .grid4 { display: grid; gap: 10px; }
+  @media (min-width: 800px) { .grid4 { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 1000px) { .grid4.four { grid-template-columns: 1fr 1fr 1fr 1fr; } }
+  .layer {
+    background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 14px;
+  }
+  .layer h4 { color: var(--primary); font-size: .9rem; margin-bottom: 6px; }
+  .layer .kw { display: flex; flex-wrap: wrap; gap: 4px; margin: 8px 0; }
+  .layer .kw span {
+    font-size: .7rem; font-weight: 700; padding: 2px 8px; border-radius: 999px;
+    background: #f0f4f8; color: #456;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: .8rem; background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 12px; }
+  th, td { border-bottom: 1px solid var(--border); padding: 10px 8px; text-align: left; vertical-align: top; line-height: 1.45; }
+  th { background: #e8eef5; color: var(--primary); }
+  tr:last-child td { border-bottom: none; }
+  .check { list-style: none; }
+  .check li {
+    display: grid; grid-template-columns: 28px 1fr; gap: 8px;
+    padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px;
+    margin-bottom: 8px; background: #fff; font-size: .86rem; line-height: 1.5;
+  }
+  .check .mark { color: var(--accent); font-weight: 800; }
+  .muted { color: var(--muted); font-size: .8rem; }
+  .err { color: #c62828; padding: 20px; }
+  code.path { font-size: .78rem; background: #eef2f7; padding: 1px 6px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<nav class="site-nav" aria-label="站点导航">
+  <a class="brand" href="../search/index.html">
+    <img src="../search/assets/favicon.svg" alt="">
+    <span>EdgeNexus · 边云合智</span>
+  </a>
+  <div class="links">
+    <a href="../search/index.html">文献检索</a>
+    <a href="../patents/index.html">专利对照</a>
+    <a href="../reproduce/index.html">复现案例</a>
+    <a href="../videos/index.html">会议视频</a>
+    <a href="../projects/index.html">项目管理</a>
+    <a href="../briefing/index.html">开学汇报</a>
+    <a href="index.html" class="active">WAIC 学习</a>
+  </div>
+</nav>
+<header>
+  <h1>WAIC 2026 · 云边协同计算 · 我学到的东西</h1>
+  <p>从 <code style="opacity:.9">D:\刚需\实验\WAIC</code> 会议材料提炼的研究方向笔记：超节点、边端推理、跨芯软件栈与 Agentic 控制面如何重写「云边协同」叙事。</p>
+</header>
+<div class="wrap" id="app"><p class="muted">加载中…</p></div>
+<script>
+async function main() {
+  const app = document.getElementById('app');
+  let data;
+  try {
+    const r = await fetch('learnings.json?_=' + Date.now());
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    data = await r.json();
+  } catch (e) {
+    app.innerHTML = '<p class="err">无法加载 learnings.json。请用本地服务打开：http://127.0.0.1:8765/waic/</p>';
+    return;
+  }
+  app.innerHTML = render(data);
+}
+
+function render(d) {
+  const ev = d.event;
+  let h = '';
+
+  h += `<div class="panel">
+    <div class="badges">
+      <span class="badge green">云边协同研究方向</span>
+      <span class="badge">${esc(ev.date)}</span>
+    </div>
+    <h3>${esc(ev.title)}</h3>
+    <div class="meta">主题：${esc(ev.theme)} · 会场：${esc((ev.venues || []).join(' · '))}</div>
+    <p style="margin-top:12px"><strong>必背一句话：</strong>${esc(d.one_liner)}</p>
+    <div class="formula">${esc(d.formula)}</div>
+    <p class="muted" style="margin-top:10px">材料根目录：${esc(d.source_path)} · 更新 ${esc(d.updated)}</p>
+  </div>`;
+
+  h += `<h2 class="section-title">1. 相对往年：学云边要换镜头</h2>
+    <div style="overflow-x:auto"><table>
+      <thead><tr><th>维度</th><th>以往常见叙事</th><th>WAIC 2026 与云边相关</th></tr></thead><tbody>`;
+  for (const row of (d.lens_shift || [])) {
+    h += `<tr><td><strong>${esc(row.axis)}</strong></td><td>${esc(row.before)}</td><td>${esc(row.now)}</td></tr>`;
+  }
+  h += `</tbody></table></div>`;
+
+  h += `<h2 class="section-title">2. 四层知识地图</h2><div class="grid4 four">`;
+  for (const L of (d.layers || [])) {
+    h += `<div class="layer"><h4>${esc(L.name)}</h4>
+      <p>${esc(L.solves)}</p>
+      <div class="kw">${(L.keywords || []).map(k => `<span>${esc(k)}</span>`).join('')}</div>
+    </div>`;
+  }
+  h += `</div>`;
+
+  h += `<h2 class="section-title">3. 核心概念（会上真正学透的）</h2>`;
+  for (const c of (d.concepts || [])) {
+    h += `<div class="panel"><h3>${esc(c.name)}</h3>
+      <p>${esc(c.definition)}</p>`;
+    if (c.features && c.features.length) {
+      h += `<ul style="margin-top:8px">${c.features.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
+    }
+    if (c.stages && c.stages.length) {
+      h += `<p style="margin-top:8px"><strong>发展阶段：</strong>${esc(c.stages.join(' → '))}</p>`;
+    }
+    if (c.examples && c.examples.length) {
+      h += `<p style="margin-top:8px"><strong>会场锚点：</strong>${esc(c.examples.join('；'))}</p>`;
+    }
+    h += `</div>`;
+  }
+
+  h += `<h2 class="section-title">4. 我带走的结论</h2>`;
+  for (const t of (d.takeaways || [])) {
+    h += `<div class="panel"><h3>${esc(t.title)}</h3>
+      <ul>${(t.points || []).map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>`;
+  }
+
+  h += `<h2 class="section-title">5. 映射到我的云边协同研究</h2>
+    <div style="overflow-x:auto"><table>
+      <thead><tr><th>已有工作</th><th>WAIC 镜头怎么用</th></tr></thead><tbody>`;
+  for (const row of (d.research_bridge || [])) {
+    h += `<tr><td><strong>${esc(row.your_work)}</strong></td><td>${esc(row.waic_lens)}</td></tr>`;
+  }
+  h += `</tbody></table></div>`;
+
+  h += `<h2 class="section-title">6. 典型闭环案例（会场话术）</h2><div class="grid4">`;
+  for (const c of (d.cases || [])) {
+    h += `<div class="layer"><h4>${esc(c.name)}</h4><p>${esc(c.flow)}</p></div>`;
+  }
+  h += `</div>`;
+
+  h += `<h2 class="section-title">7. 通透自检（闭卷）</h2><ul class="check">`;
+  for (const item of (d.checklist || [])) {
+    h += `<li><div class="mark">□</div><div>${esc(item)}</div></li>`;
+  }
+  h += `</ul>`;
+
+  h += `<h2 class="section-title">8. 本地材料索引</h2><div class="panel"><ul>`;
+  for (const m of (d.materials || [])) {
+    h += `<li><code class="path">${esc(m.path)}</code> — ${esc(m.role)}</li>`;
+  }
+  h += `</ul>
+    <p class="muted" style="margin-top:10px">完整手册：WAIC_会议本体/WAIC2026_云边协同计算_整合学习手册.md（及同名 .docx）</p>
+  </div>`;
+
+  return h;
+}
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+main();
+</script>
+</body>
+</html>

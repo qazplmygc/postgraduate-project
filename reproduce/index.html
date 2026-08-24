@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>复现案例 · EdgeNexus 边云合智</title>
+<link rel="icon" href="../search/assets/favicon.svg" type="image/svg+xml">
+<script src="../search/assets/site.js"></script>
+<style>
+  :root {
+    --bg: #f0f4f8; --card: #fff; --primary: #1a478a; --accent: #2e7d32;
+    --text: #333; --muted: #888; --border: #dde3ea;
+    --ok: #2e7d32; --warn: #ef6c00; --bad: #c62828;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .site-nav {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 28px; height: 52px; background: #0f2f5c;
+  }
+  .site-nav .brand { display: inline-flex; align-items: center; gap: 10px; color: #fff; font-weight: 700; text-decoration: none; }
+  .site-nav .brand img { width: 28px; height: 28px; border-radius: 7px; }
+  .site-nav .links { display: flex; gap: 6px; flex-wrap: wrap; }
+  .site-nav .links a {
+    color: rgba(255,255,255,.78); text-decoration: none; font-size: .9rem; font-weight: 600;
+    padding: 8px 14px; border-radius: 8px;
+  }
+  .site-nav .links a:hover { background: rgba(255,255,255,.1); color: #fff; }
+  .site-nav .links a.active { background: rgba(255,255,255,.16); color: #fff; }
+  header { background: linear-gradient(135deg, #1a478a, #2563b0); color: #fff; padding: 28px 32px; }
+  header h1 { font-size: 1.5rem; }
+  header p { opacity: .9; margin-top: 8px; max-width: 920px; line-height: 1.55; font-size: .95rem; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 22px 20px 48px; }
+  .case-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px; margin-bottom: 14px; cursor: pointer; transition: box-shadow .15s;
+  }
+  .case-card:hover { box-shadow: 0 4px 16px rgba(26,71,138,.12); }
+  .badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 10px; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: .72rem; font-weight: 700; }
+  .b-ok { background: #e8f5e9; color: var(--ok); }
+  .b-warn { background: #fff3e0; color: var(--warn); }
+  .b-bad { background: #fce4ec; color: var(--bad); }
+  .b-info { background: #e3f2fd; color: #1565c0; }
+  .score {
+    display: inline-flex; align-items: baseline; gap: 4px;
+    font-weight: 800; color: var(--primary); font-size: 1.4rem;
+  }
+  .score span { font-size: .8rem; font-weight: 600; color: var(--muted); }
+  .section-title {
+    font-size: 1.02rem; font-weight: 700; color: var(--primary);
+    margin: 26px 0 10px; padding-left: 10px; border-left: 4px solid var(--accent);
+  }
+  .panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; }
+  .panel h3 { font-size: .92rem; color: var(--primary); margin-bottom: 8px; }
+  .panel p, .panel li { font-size: .88rem; line-height: 1.65; color: #444; }
+  .panel ul { padding-left: 1.1rem; }
+  .verdict { font-size: .95rem; line-height: 1.65; }
+  .check { list-style: none; }
+  .check li {
+    display: grid; grid-template-columns: 28px 1fr; gap: 8px;
+    padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px;
+    margin-bottom: 8px; background: #fff; font-size: .86rem; line-height: 1.5;
+  }
+  .check .mark { font-weight: 800; }
+  .check .mark.ok { color: var(--ok); }
+  .check .mark.no { color: var(--bad); }
+  .check .note { color: var(--muted); font-size: .8rem; margin-top: 3px; }
+  table { width: 100%; border-collapse: collapse; font-size: .8rem; background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 12px; }
+  th, td { border-bottom: 1px solid var(--border); padding: 10px 8px; text-align: left; vertical-align: top; line-height: 1.45; }
+  th { background: #e8eef5; color: var(--primary); }
+  tr:last-child td { border-bottom: none; }
+  tr.best td { background: #e8f5e9; font-weight: 600; }
+  .code-map code { font-size: .78rem; background: #eef2f7; padding: 1px 6px; border-radius: 4px; }
+  .figs { display: grid; grid-template-columns: 1fr; gap: 14px; }
+  @media (min-width: 860px) { .figs { grid-template-columns: 1fr 1fr; } }
+  .fig { background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .fig img { width: 100%; display: block; background: #fafafa; }
+  .fig figcaption { padding: 10px 12px; font-size: .8rem; color: #555; line-height: 1.4; }
+  .btn {
+    display: inline-block; margin-top: 8px; margin-right: 8px; padding: 7px 12px;
+    background: var(--primary); color: #fff; border-radius: 7px; font-size: .82rem;
+    font-weight: 600; text-decoration: none;
+  }
+  .btn.ghost { background: #fff; color: var(--primary); border: 1px solid #bbdefb; }
+  .btn:hover { background: #2563b0; }
+  .btn.ghost:hover { background: #e3f2fd; }
+  pre.run {
+    background: #0f2f5c; color: #e3f2fd; padding: 12px 14px; border-radius: 10px;
+    font-size: .78rem; overflow-x: auto; line-height: 1.55; margin-top: 8px;
+  }
+  .back { display: inline-block; margin-bottom: 12px; color: var(--primary); font-weight: 600; text-decoration: none; font-size: .9rem; }
+  .err { color: var(--bad); padding: 20px; }
+  .muted { color: var(--muted); font-size: .8rem; }
+  .gap li { margin-bottom: 6px; }
+  .rank-block { margin-bottom: 16px; }
+  .rank-block h4 { font-size: .88rem; color: var(--primary); margin-bottom: 6px; }
+  .sweep-grid { display: grid; gap: 10px; }
+  @media (min-width: 700px) { .sweep-grid { grid-template-columns: 1fr 1fr 1fr; } }
+  .sweep-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
+  .sweep-card h4 { font-size: .82rem; color: var(--primary); margin-bottom: 6px; }
+  .claim-ok { color: var(--ok); font-weight: 700; }
+  .claim-no { color: var(--bad); font-weight: 700; }
+</style>
+</head>
+<body>
+<nav class="site-nav" aria-label="站点导航">
+  <a class="brand" href="../search/index.html">
+    <img src="../search/assets/favicon.svg" alt="">
+    <span>EdgeNexus · 边云合智</span>
+  </a>
+  <div class="links">
+    <a href="../search/index.html">文献检索</a>
+    <a href="../patents/index.html">专利对照</a>
+    <a href="index.html" class="active">复现案例</a>
+    <a href="../videos/index.html">会议视频</a>
+    <a href="../projects/index.html">项目管理</a>
+    <a href="../briefing/index.html">开学汇报</a>
+    <a href="../waic/index.html">WAIC 学习</a>
+  </div>
+</nav>
+<header>
+  <h1>复现案例 · 论文对照与闭环判定</h1>
+  <p>逐案判断是否为目标算法、复现是否完美闭环，并与原文（问题 / 方法 / 图 / 参数 / 数值）对照。含 OJCTA、CA-CECC、IGTO/GRAO、区块链安全边云协作（Xu et al.）。</p>
+</header>
+<div class="wrap" id="app"><p class="muted">加载中…</p></div>
+<script>
+async function main() {
+  const app = document.getElementById('app');
+  let data;
+  try {
+    const r = await fetch('cases.json?_=' + Date.now());
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    data = await r.json();
+  } catch (e) {
+    app.innerHTML = '<p class="err">无法加载 cases.json。请用 open.bat / 本地服务打开（http://127.0.0.1:8765/reproduce/）。</p>';
+    return;
+  }
+  const id = new URLSearchParams(location.search).get('id');
+  if (id) {
+    const c = data.cases.find(x => x.id === id);
+    if (!c) { app.innerHTML = '<p class="err">未找到案例 ' + esc(id) + '</p>'; return; }
+    app.innerHTML = renderDetail(c);
+    return;
+  }
+  app.innerHTML = renderList(data);
+}
+
+function modelBadgeClass(s) {
+  const lbl = s.model_label || s.is_ojcta_label || '';
+  return lbl.startsWith('是') ? 'b-ok' : 'b-bad';
+}
+
+function loopBadgeClass(s) {
+  if (s.closed_loop === 'perfect') return 'b-ok';
+  if (s.score >= 85) return 'b-warn';
+  return 'b-warn';
+}
+
+function renderList(data) {
+  let h = `<p class="muted">更新 ${esc(data.updated)} · ${data.cases.length} 个案例</p>`;
+  for (const c of data.cases) {
+    const s = c.status;
+    h += `<article class="case-card" onclick="location.href='?id=${encodeURIComponent(c.id)}'">
+      <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start">
+        <div>
+          <div style="font-weight:800;color:var(--primary);font-size:1.05rem">${esc(c.id)} · ${esc(c.title)}</div>
+          <div class="badges">
+            <span class="badge ${modelBadgeClass(s)}">${esc(s.model_label || s.is_ojcta_label || '')}</span>
+            <span class="badge ${loopBadgeClass(s)}">${esc(s.closed_loop_label)}</span>
+            <span class="badge b-info">${esc(c.paper.journal)} ${esc(String(c.paper.year))}</span>
+          </div>
+          <p style="font-size:.88rem;color:#555;line-height:1.55;max-width:720px">${esc(s.verdict)}</p>
+        </div>
+        <div class="score">${s.score}<span>/100</span></div>
+      </div>
+    </article>`;
+  }
+  return h;
+}
+
+function renderDetail(c) {
+  const s = c.status;
+  const p = c.paper;
+  const apiPdf = (window.EdgeNexus && EdgeNexus.pdfApiUrl(p.local_pdf)) || '';
+  const pdfBtns = apiPdf
+    ? `<a class="btn" href="${apiPdf}" target="_blank" rel="noopener">打开论文 PDF</a>`
+    : (p.doi
+      ? `<a class="btn" href="https://doi.org/${esc(p.doi)}" target="_blank" rel="noopener">DOI 打开论文</a>`
+      : `<span class="muted">PDF 需本机 search/open.bat</span>`);
+  const sec1 = c.section1_title || '1. 论文与模型介绍';
+  const intro = p.intro || p.ojcta_def || '';
+
+  let h = `<a class="back" href="index.html">← 全部案例</a>
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div>
+          <h2 style="font-size:1.25rem;color:var(--primary)">${esc(c.id)} · ${esc(c.title)}</h2>
+          <div class="badges">
+            <span class="badge ${modelBadgeClass(s)}">${esc(s.model_label || s.is_ojcta_label || '')}</span>
+            <span class="badge ${loopBadgeClass(s)}">${esc(s.closed_loop_label)}</span>
+            <span class="badge b-info">${esc(p.zone || '')}</span>
+          </div>
+        </div>
+        <div class="score">${s.score}<span>/100 闭环分</span></div>
+      </div>
+      <p class="verdict" style="margin-top:8px">${esc(s.verdict)}</p>
+      <div style="margin-top:10px">
+        ${pdfBtns}
+        ${p.doi && apiPdf ? `<a class="btn ghost" href="https://doi.org/${esc(p.doi)}" target="_blank" rel="noopener">DOI</a>` : ''}
+      </div>
+      <p class="muted" style="margin-top:10px">实验目录：${esc(c.experiment_path)} · 包：${esc(c.package)}</p>
+    </div>`;
+
+  h += `<h2 class="section-title">${esc(sec1)}</h2>
+    <div class="panel">
+      <p><strong>${esc(p.title)}</strong></p>
+      <p class="muted" style="margin-top:4px">${esc(p.authors || '')} · ${esc(p.journal)} ${esc(String(p.year))}${p.volume ? ' Vol.' + esc(p.volume) : ''}${p.number ? ' No.' + esc(p.number) : ''}</p>
+      <p style="margin-top:10px"><strong>一句话：</strong>${esc(p.short)}</p>
+      ${intro ? `<p style="margin-top:8px">${esc(intro)}</p>` : ''}
+      ${p.problem ? `<p style="margin-top:8px"><strong>优化目标：</strong>${esc(p.problem)}</p>` : ''}
+      ${(p.method_stack && p.method_stack.length) ? `<ul style="margin-top:8px">${p.method_stack.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+    </div>`;
+
+  h += `<h2 class="section-title">2. 复现是否完美闭环？</h2>
+    <div class="panel"><p>${esc(c.closed_loop_intro || '见下方清单。')}</p></div>
+    <ul class="check">`;
+  for (const row of (c.closed_loop_checklist || [])) {
+    h += `<li><div class="mark ${row.ok ? 'ok' : 'no'}">${row.ok ? '✓' : '✗'}</div>
+      <div><strong>${esc(row.item)}</strong><div class="note">${esc(row.note)}</div></div></li>`;
+  }
+  h += `</ul>`;
+
+  if (c.conclusion_check && c.conclusion_check.length) {
+    h += `<h2 class="section-title">3. 与论文结论逐条对照</h2><div style="overflow-x:auto"><table>
+      <thead><tr><th>论文 Section V 结论</th><th>本复现</th><th>说明</th></tr></thead><tbody>`;
+    for (const row of c.conclusion_check) {
+      h += `<tr><td>${esc(row.claim)}</td>
+        <td class="${row.ok ? 'claim-ok' : 'claim-no'}">${row.ok ? '✅ 一致' : '⚠️ 部分/未贴近'}</td>
+        <td>${esc(row.note)}</td></tr>`;
+    }
+    h += `</tbody></table></div>`;
+  }
+
+  if (c.result_rankings && c.result_rankings.length) {
+    h += `<h2 class="section-title">${c.conclusion_check ? '4' : '3'}. 数值对比 · 关键工况排序</h2>`;
+    for (const block of c.result_rankings) {
+      const valHeader = block.value_header || 'E[T] (ms)';
+      const valKey = block.value_key || 'et_ms';
+      h += `<div class="rank-block"><h4>${esc(block.title)}</h4><table><thead><tr><th>排名</th><th>方案</th><th>${esc(valHeader)}</th></tr></thead><tbody>`;
+      for (const row of block.rows) {
+        h += `<tr class="${row.best ? 'best' : ''}"><td>${row.rank}</td><td>${esc(row.scheme)}</td><td>${esc(row[valKey] ?? row.et_ms ?? '')}</td></tr>`;
+      }
+      h += `</tbody></table><p class="muted">${esc(block.note || '')}</p></div>`;
+    }
+  }
+
+  if (c.result_sweeps && c.result_sweeps.length) {
+    const n = (c.conclusion_check ? 5 : (c.result_rankings ? 5 : 4));
+    h += `<h2 class="section-title">${n}. 扫描曲线数值（CA-CECC，未平滑）</h2><div class="sweep-grid">`;
+    for (const sw of c.result_sweeps) {
+      h += `<div class="sweep-card"><h4>${esc(sw.title)}</h4><table><tbody>`;
+      for (const pt of sw.points) {
+        h += `<tr><td>${esc(pt.x)}</td><td><strong>${esc(pt.y)}</strong></td></tr>`;
+      }
+      h += `</tbody></table><p class="muted" style="margin-top:6px">${esc(sw.note || '')}</p></div>`;
+    }
+    h += `</div>`;
+  }
+
+  const vsSec = 3 + (c.conclusion_check ? 1 : 0) + (c.result_rankings ? 1 : 0) + (c.result_sweeps ? 1 : 0);
+  h += `<h2 class="section-title">${vsSec}. 与论文对照（机制 / 参数 / 图）</h2>
+    <div style="overflow-x:auto"><table>
+      <thead><tr><th>维度</th><th>论文</th><th>本复现</th><th>吻合</th></tr></thead><tbody>`;
+  for (const row of (c.vs_paper || [])) {
+    h += `<tr><td><strong>${esc(row.axis)}</strong></td><td>${esc(row.paper)}</td><td>${esc(row.repro)}</td><td>${esc(row.match)}</td></tr>`;
+  }
+  h += `</tbody></table></div>`;
+
+  h += `<h2 class="section-title">${vsSec + 1}. 代码 ↔ 论文映射</h2>
+    <div class="panel code-map"><ul>`;
+  for (const m of (c.code_map || [])) {
+    h += `<li><code>${esc(m.module)}</code> → ${esc(m.maps_to)}</li>`;
+  }
+  h += `</ul></div>`;
+
+  h += `<h2 class="section-title">${vsSec + 2}. 复现图（本地已生成）</h2><div class="figs">`;
+  for (const f of (c.figures || [])) {
+    const src = `cases/${esc(c.id)}/figs/${esc(f.file)}`;
+    h += `<figure class="fig"><a href="${src}" target="_blank"><img src="${src}" alt="${esc(f.caption)}" loading="lazy"></a>
+      <figcaption>${esc(f.caption)}</figcaption></figure>`;
+  }
+  h += `</div>`;
+
+  if (c.gaps_priority && c.gaps_priority.length) {
+    h += `<h2 class="section-title">${vsSec + 3}. 距「完美闭环」仍差什么</h2>
+      <div class="panel"><ol class="gap">${c.gaps_priority.map(x => `<li>${esc(x)}</li>`).join('')}</ol></div>`;
+  }
+
+  h += `<h2 class="section-title">${vsSec + (c.gaps_priority ? 4 : 3)}. 运行入口</h2>
+    <div class="panel"><pre class="run">${(c.how_to_run || []).map(esc).join('\n')}</pre></div>`;
+
+  return h;
+}
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+
+main();
+</script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+{
+  "updated": "2026-08-24",
+  "patents": [
+    {
+      "id": "US12160341B1",
+      "group": "primary",
+      "group_label": "首轮推荐 · 国外",
+      "title_en": "Coordination of edge computing in a mobile network",
+      "title_zh": "移动网络中边缘计算的协同编排",
+      "focus": "MEC 与网络协同编排",
+      "jurisdiction": "US",
+      "status": "Granted",
+      "grant_date": "2024-12-03",
+      "filing_date": "2023-10-16",
+      "assignee": "International Business Machines Corporation (IBM)",
+      "inventors": ["Maja Curic", "Sagar Tayal"],
+      "local_file": "files/US12160341B1.pdf",
+      "google_url": "https://patents.google.com/patent/US12160341B1",
+      "problem": "MEC 编排器与网络编排器各自优化，缺少在网络侧优化失效时的跨域联动：何时、如何用应用部署变更去支撑网络优化目标。",
+      "method": "MEC Orchestrator 监控部署指标/参数；接收 Network Orchestrator 的优化报告并判定低效；若满足低效准则则生成带预期响应的部署建议集并回传；网络侧选定建议后，MEC 侧执行部署参数变更（启停、迁移、规则调整、用户连接迁移等）。",
+      "claims_focus": "MEC–Network 双向协商闭环：报告→低效判定→建议排序→选定→应用变更；可对接 near-RT/non-RT RIC、传输层与云编排等多域编排。",
+      "relevance": "偏系统/标准架构：把「算力部署」与「网络优化」解耦又联动。对研究的启示是把编排接口与 SLA/负载指标显式建模，而不是只做端侧卸载决策。",
+      "keywords": ["MEC orchestrator", "network orchestrator", "deployment suggestion", "SLA", "migration"]
+    },
+    {
+      "id": "CN121029434B",
+      "group": "primary",
+      "group_label": "首轮推荐 · 国内",
+      "title_en": "Dynamic cloud-edge collaborative task scheduling method",
+      "title_zh": "一种基于动态云边协同的任务调度方法",
+      "focus": "动态云边协同任务调度",
+      "jurisdiction": "CN",
+      "status": "授权",
+      "grant_date": "2026-03-03",
+      "filing_date": "2025-10-29",
+      "application_number": "CN202511559341.7",
+      "assignee": "中科南京信息高铁研究院",
+      "inventors": ["张宗帅", "张思雨", "邹文浩", "田霖", "武广智"],
+      "local_file": "files/CN121029434B.pdf",
+      "google_url": "https://patents.google.com/patent/CN121029434B",
+      "problem": "VR 等时延敏感业务下，终端数与服务器规模动态波动；静态调度易队列溢出、时延飙升；传统 MLP 输入输出维度固定，难适配可变拓扑。",
+      "method": "云-边-端子系统建模为异构图 → GNN 提取节点/链路特征并输出任务分配、功率分配、计算资源三类策略矩阵 → 以总时延为奖励，用 PPO + GAE 稳定更新 → 执行时按负载在边优先、云卸载、边-边协同间切换。",
+      "claims_focus": "链路级异构图 + GNN 策略头 + PPO 裁剪更新；强调规模自适应与 VR 场景时延优化（相对纯边/纯云有时延降幅宣称）。",
+      "relevance": "与云边协同 + DRL 路线高度同构：图结构状态、连续/比例卸载、时延奖励。可对标你工作中的状态表征（是否仅节点特征）与动作空间（是否含功率/算力联合分配）。",
+      "keywords": ["GNN", "PPO", "异构图", "云边端", "VR", "任务卸载"]
+    },
+    {
+      "id": "US11627095B2",
+      "group": "companion",
+      "group_label": "同体例仿写 · 国外",
+      "title_en": "Orchestrating edge service workloads across edge hierarchies",
+      "title_zh": "跨边缘层级的服务工作负载编排",
+      "focus": "跨边缘层级的服务工作负载编排",
+      "jurisdiction": "US",
+      "status": "Granted",
+      "grant_date": "2023-04-11",
+      "filing_date": "2021-06-15",
+      "assignee": "Microsoft Technology Licensing, LLC",
+      "inventors": ["Ganesh Ananthanarayanan", "Yuanchao Shu", "Paramvir Bahl"],
+      "local_file": "files/US11627095B2.pdf",
+      "google_url": "https://patents.google.com/patent/US11627095B2",
+      "problem": "边缘常呈「近端→网络边→云」层级；流水线型服务（如视频处理）需决定各段 workload 落在哪一层，并在容量/带宽变化时动态重分布。",
+      "method": "边缘向云侧服务商上报容量与使用数据；编排器用代价函数（可含 0-1 / 二次损失、SLA/策略约束）划分流水线 workload 在层级间的分布；本地 edge manager 与中心 orchestrator 按阈值分工；容量更新后重算分布并可迁移状态。",
+      "claims_focus": "层级上报 + cost-function 分区/重分布；orchestrator ↔ local edge manager 协同；面向处理流水线的跨层放置。",
+      "relevance": "偏「服务流水线 × 层级放置」工业编排。相对 US12160341B1 更强调 workload 切分与代价，而非 MEC–RAN 协商接口。可借鉴多层决策边界与状态迁移成本建模。",
+      "keywords": ["edge hierarchy", "cost function", "workload partition", "pipeline", "orchestrator"]
+    },
+    {
+      "id": "CN119697701B",
+      "group": "companion",
+      "group_label": "同体例仿写 · 国内",
+      "title_en": "CNN-oriented mobile edge computing dynamic offloading method",
+      "title_zh": "面向 CNN 网络的移动边缘计算动态卸载方法及设备介质",
+      "focus": "面向 CNN 的移动边缘动态卸载",
+      "jurisdiction": "CN",
+      "status": "授权",
+      "grant_date": "2025-05-16",
+      "filing_date": "2025-02-24",
+      "application_number": "CN202510204142.8",
+      "assignee": "集美大学",
+      "inventors": ["孙养龙", "罗文乾", "许伟坚", "高志斌", "许志平", "周晓凤", "魏林海"],
+      "local_file": "files/CN119697701B.pdf",
+      "google_url": "https://patents.google.com/patent/CN119697701B",
+      "problem": "CNN 任务结构串行、切分点多；海上/物联网等动态、资源紧缺 MEC 中，通信不稳使粗粒度抽象任务策略难用，需联合任务切分与资源分配。",
+      "method": "通感算一体化场景采集图像/设备/网络状态 → 系统模型转为「计算任务切分 + 资源分配」 → MDP → 多智能体深度强化学习（如 SA-MADDPG 类联合策略）训练 → 部署后实时输出切分与算力分配决策并下发节点。",
+      "claims_focus": "面向 CNN 的动态部分卸载；通感算一体化建模；MADRL 联合优化切分与资源。",
+      "relevance": "与「CNN/DNN 分区卸载 + MARL」论文线最近。相对 CN121029434B（通用 VR 云边调度 + GNN-PPO），本专利更垂类模型结构与多智能体。可对标动作是否显式含层切分点、是否多 MES 竞争。",
+      "keywords": ["CNN", "MEC", "MADRL", "任务切分", "通感算", "部分卸载"]
+    }
+  ],
+  "analysis": {
+    "pairing": [
+      {
+        "title": "首轮对：编排接口 vs 智能调度",
+        "us": "US12160341B1",
+        "cn": "CN121029434B",
+        "point": "国外专利落在 MEC 编排器与网络编排器的协商协议与系统权利要求；国内专利落在算法流程（异构图+GNN+PPO）与 VR 业务时延目标。二者同属「云边协同」，但保护客体一为跨域编排闭环，一为可实施的调度方法链。"
+      },
+      {
+        "title": "仿写对：层级流水线 vs CNN 动态卸载",
+        "us": "US11627095B2",
+        "cn": "CN119697701B",
+        "point": "国外专利强调跨边缘层级的 workload/pipeline 代价优化与中心-本地分工；国内专利强调 CNN 结构感知的切分卸载与 MADRL。体例上仍是「系统编排专利 ↔ 方法/算法专利」的中外对照。"
+      }
+    ],
+    "compare_matrix": [
+      {"axis": "保护重心", "US12160341B1": "编排协商与部署变更", "CN121029434B": "GNN-PPO 调度方法", "US11627095B2": "层级 cost 分区", "CN119697701B": "CNN+MADRL 卸载"},
+      {"axis": "决策主体", "US12160341B1": "MEC ↔ Network Orchestrator", "CN121029434B": "统一策略网络", "US11627095B2": "云 orchestrator + local edge manager", "CN119697701B": "多智能体联合策略"},
+      {"axis": "状态/输入", "US12160341B1": "部署指标+优化报告", "CN121029434B": "异构图节点/链路特征", "US11627095B2": "容量与使用上报", "CN119697701B": "图像任务+设备/网络状态"},
+      {"axis": "动作空间", "US12160341B1": "部署参数变更建议", "CN121029434B": "卸载比例/功率/算力矩阵", "US11627095B2": "流水线段放置与迁移", "CN119697701B": "切分决策+资源分配"},
+      {"axis": "与 CECC 研究贴近度", "US12160341B1": "中（架构接口）", "CN121029434B": "高（DRL 调度）", "US11627095B2": "中高（分层放置）", "CN119697701B": "高（DNN 卸载+MARL）"}
+    ],
+    "takeaways": [
+      "写专利/对标时：系统权利要求（编排器交互、报告、建议、应用）与方法权利要求（建模→MDP→学习→部署）可成对布局，中外各一篇更易形成「同体例」组合。",
+      "算法侧可挖的差异点：链路级/图结构状态、联合功率-算力动作、层级 cost 与迁移状态开销、CNN 切分点动作、单智能体 PPO vs 多智能体。",
+      "US12160341B1 与 US11627095B2 都强调「编排器」，但前者是 MEC–网络优化协同，后者是云边层级 workload 分布；不要在综述里混为一谈。"
+    ]
+  }
+}

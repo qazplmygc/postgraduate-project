@@ -1,0 +1,562 @@
+{
+  "updated": "2026-08-24",
+  "cases": [
+    {
+      "id": "003f",
+      "title": "OJCTA 多接入 MEC 复现",
+      "experiment_path": "D:\\刚需\\实验\\003f",
+      "package": "ojcta_mec",
+      "section1_title": "1. 是否 OJCTA 模型？",
+      "closed_loop_intro": "闭环 =「论文设定 → 模型/算法 → 仿真推进 → 出图/指标 → 与原文可对账」。当前为部分闭环：算法链路完整且图已生成，但未达到无捷径、参数一致、数值可自动对账的完美标准。",
+      "status": {
+        "model_label": "是 · OJCTA 模型",
+        "closed_loop": "partial",
+        "closed_loop_label": "部分闭环 · 非完美",
+        "score": 72,
+        "verdict": "代码明确实现论文 OJCTA（Alg.1–4 + Lyapunov 队列），并已出 Fig.3–7；但参数/能耗口径/部分出图捷径与原文仍有偏差，不能称为完美数值闭环。"
+      },
+      "paper": {
+        "title": "Online Collaborative Resource Allocation and Task Offloading for Multi-Access Edge Computing",
+        "short": "边–云协同 MEC 下的在线联合通信资源分配与任务卸载（OJCTA）",
+        "journal": "IEEE Transactions on Mobile Computing",
+        "year": 2025,
+        "volume": "24",
+        "number": "11",
+        "doi": "10.1109/TMC.2025.3580365",
+        "authors": "Geng Sun, Minghua Yuan, Zemin Sun, et al.",
+        "local_pdf": "5.1/Online_Collaborative_Resource_Allocation_and_Task_Offloading_for_Multi-Access_Edge_Computing.pdf",
+        "zone": "中科院一区",
+        "intro": "OJCTA（Online Joint Communication resource allocation and Task offloading Approach）针对 MEC 中能耗–时延耦合的 EEDAOP：用 Lyapunov 把长期排队约束转为实时优化，再经 Tammer 分解、凸优化、双边匹配与依赖舍入在线决策。",
+        "problem": "EEDAOP：最小化 UD 能耗，约束任务截止与长期排队时延；MINLP 非凸。",
+        "method_stack": [
+          "边–云协同 MEC 架构",
+          "Lyapunov 虚拟队列 ZE/ZC",
+          "Algorithm 1 能量匹配（Swap + Removal）",
+          "Algorithm 2 云卸载（线性松弛 + 依赖舍入）",
+          "Algorithm 3 容量 n 扫描最小化 J=V·E+Q",
+          "Algorithm 4 时隙在线主循环"
+        ]
+      },
+      "code_map": [
+        {"module": "params.py", "maps_to": "Table I / Section III 参数；params_paper_figures() ↔ Fig.3–6 设定"},
+        {"module": "channel.py", "maps_to": "Section III-B 式 (3)–(6) 信道与带宽分配"},
+        {"module": "mobility.py", "maps_to": "式 (1)(2) Gauss-Markov 移动"},
+        {"module": "dynamics.py", "maps_to": "式 (10)(11) 物理队列 + 式 (15) 虚拟队列 + Little 时延"},
+        {"module": "ojcta.py", "maps_to": "Section V · Algorithm 1–4（OJCTA 核心）"},
+        {"module": "baselines.py", "maps_to": "Section VI-A-3：LC / RO / FO / GJTORA / SSC / NCC / ECF"},
+        {"module": "paper_figures.py", "maps_to": "Fig.3–7 出图流水线"},
+        {"module": "run_experiment.py", "maps_to": "V 扫描多策略对比入口"}
+      ],
+      "closed_loop_checklist": [
+        {"item": "论文身份可核对（TMC 2025 · OJCTA 定义）", "ok": true, "note": "摘要明确提出 OJCTA；本地 PDF 在 5.1"},
+        {"item": "系统模型可运行（信道 / 移动 / 队列）", "ok": true, "note": "channel + mobility + dynamics 闭环推进时隙"},
+        {"item": "OJCTA 核心算法 Alg.1–4", "ok": true, "note": "ojcta.py 按章节注释实现"},
+        {"item": "对比基线齐全", "ok": true, "note": "LC/RO/FO/GJTORA/ECF/SSC/NCC 等"},
+        {"item": "论文图复现脚本 + 已生成图像", "ok": true, "note": "figs/fig3–fig7 均存在"},
+        {"item": "Table I 参数与代码默认值严格一致", "ok": false, "note": "mobility 注释 ω=0.8，params 默认 omega=0.9"},
+        {"item": "出图全程全 n 扫描（Alg.3）", "ok": false, "note": "Fig.7 固定 fast_alg3=True，仅扫 n∈{Cm,⌊Cm/2⌋,1}"},
+        {"item": "曲线数值与原文无视觉辅助即可对齐", "ok": false, "note": "Fig.4 可选叠加大斜率项；LC/RO 时延叠加本地积压近似"},
+        {"item": "自动数值对账报告（sim vs paper digits）", "ok": false, "note": "无独立 audit 脚本"}
+      ],
+      "vs_paper": [
+        {"axis": "问题与目标", "paper": "EEDAOP：能耗最小 + 长期排队时延约束", "repro": "Lyapunov 漂移-加惩罚 J=V·E+Q", "match": "高"},
+        {"axis": "决策结构", "paper": "通信资源分配 + 边/云卸载在线联合", "repro": "Alg.1–4 时隙循环", "match": "高"},
+        {"axis": "图结果可信度", "paper": "仿真证明 OJCTA 优于基线", "repro": "Fig.3–7 已出；部分视觉/加速开关", "match": "中"}
+      ],
+      "how_to_run": [
+        "cd /d D:\\刚需\\实验\\003f",
+        "pip install -r requirements-ojcta.txt",
+        "python -m ojcta_mec.paper_figures --outdir .\\figs",
+        "python -m ojcta_mec.run_experiment --no-plot"
+      ],
+      "figures": [
+        {"file": "fig3_V_tradeoff.png", "caption": "Fig.3 · Lyapunov 因子 V：能耗 vs 排队时延权衡"},
+        {"file": "fig4_time_slots.png", "caption": "Fig.4 · 随时间槽的能耗 / 时延对比（多策略）"},
+        {"file": "fig5_bandwidth.png", "caption": "Fig.5 · 带宽扫描"},
+        {"file": "fig6_num_ud.png", "caption": "Fig.6 · 用户数扫描"},
+        {"file": "fig7_queue_backlog_bits.png", "caption": "Fig.7 · 各 MEC 队列积压 QE/QC"}
+      ],
+      "gaps_priority": [
+        "统一 omega 与 Table I（0.8），并固定随机种子复跑 Fig.3 数值表",
+        "出图默认关闭视觉辅助；Fig.7 关闭 fast_alg3 做全 n 扫描",
+        "增加 paper_digits vs sim 误差 CSV"
+      ]
+    },
+    {
+      "id": "ca-cecc",
+      "title": "CA-CECC 编码辅助云边协同计算复现",
+      "experiment_path": "D:\\刚需\\实验\\Coding Assisted Cloud-Edge Collaborative Computing-F",
+      "package": "ca_cecc",
+      "section1_title": "1. 论文介绍 · 是否 CA-CECC 模型？",
+      "closed_loop_intro": "闭环 =「论文 Section V 参数 → 7 方案仿真 → Fig.3–10 → 3000 次 MC 排序/扫描与原文结论对账」。本仓库已达机制与趋势一致的高完成度复现；因曲线平滑、CCDF 样本量、离散时隙实现等，仍不能称为逐点数值的完美闭环。",
+      "status": {
+        "model_label": "是 · CA-CECC 模型",
+        "closed_loop": "partial",
+        "closed_loop_label": "接近闭环 · 趋势一致",
+        "score": 88,
+        "verdict": "完整实现 CA-CECC + 6 基线/简化方案，复现 Fig.3–10；关键工况 3000 次蒙特卡洛下 CA-CECC 均排第 1，与论文 Section V 主要结论一致。相对排序与趋势高度重合，单点 E[T] 未与 IEEE 原图逐点描摹。"
+      },
+      "paper": {
+        "title": "Coding Assisted Cloud-Edge Collaborative Computing",
+        "short": "用 MDS 编码 + 云广播辅助 + 边缘协作传输，同时缓解 Straggler 与下行/云边丢包导致的传输失败",
+        "journal": "IEEE Transactions on Communications",
+        "year": 2025,
+        "volume": "73",
+        "number": "11",
+        "doi": "10.1109/TCOMM.2025.3577637",
+        "authors": "Hongtao Zhu, Li Chen, Yunfei Chen, Weidong Wang",
+        "local_pdf": "5.8/Coding_Assisted_Cloud-Edge_Collaborative_Computing.pdf",
+        "zone": "中科院二区 · IEEE TCOM",
+        "intro": "云边协同计算（CECC）把任务分到 N 个边缘节点（EN）与云侧 K 个子任务，但面临两类瓶颈：① Straggler——部分 EN 算得慢拖慢整体；② 传输失败——EN→用户信道衰落、云→EN 广播丢包（概率 ε）。CA-CECC 用 MDS 编码只需收满 K 份即可恢复；云周期广播子结果形成通用节点；多 EN 协作传输（ΣH_n 达 SNR 门限）提高下行成功率。另提出低复杂度简化方案 SS-I / SS-II，其延迟为 CA-CECC 上界。",
+        "problem": "最小化期望任务完成时间 E[T]；对比 CC、CMEC、UNCT-CECC、CNCT-CECC 及 CA-CECC-SS-I/II。",
+        "method_stack": [
+          "MDS 编码：N 个 EN 负载 + 云侧 K 子任务，收 K 包解码",
+          "移位指数分布建模计算时间（式 1，参数 a_c、μ_c）",
+          "云周期广播（周期 τ₂，丢包率 ε）",
+          "协作传输：满足 Σ_{n∈C_i} H_n ≥ δσ²/P 则成功",
+          "通用节点：持有 ≥K 个云/边包的 EN 可参与协作",
+          "Algorithm 1 离散时隙事件驱动仿真",
+          "简化方案 SS-I/II：计算/传输分阶段，r₁* 数值优化"
+        ]
+      },
+      "code_map": [
+        {"module": "ca_cecc/config/params.py", "maps_to": "Section V：N=30,K=20,τ₁/τ₂,ε,δ,λ 等"},
+        {"module": "ca_cecc/models/computation.py", "maps_to": "式 (1) 移位指数计算时间"},
+        {"module": "ca_cecc/models/channel.py", "maps_to": "指数衰落 H_n、SNR 门限"},
+        {"module": "ca_cecc/models/task_coding.py", "maps_to": "MDS (N+K,K) 编解码验证"},
+        {"module": "ca_cecc/schemes/ca_cecc.py", "maps_to": "CA-CECC · Algorithm 1 主循环"},
+        {"module": "ca_cecc/schemes/ca_cecc_ss1.py / ss2.py", "maps_to": "简化方案 SS-I / SS-II"},
+        {"module": "ca_cecc/schemes/*.py (CC/CMEC/…)", "maps_to": "Section V 全部对比基线"},
+        {"module": "ca_cecc/simulator/monte_carlo.py", "maps_to": "λ / ε / K 扫描驱动"},
+        {"module": "ca_cecc/plots/reproduce_figs.py", "maps_to": "Fig.3–10 出图 + npz 缓存"},
+        {"module": "scripts/run_advisor_3k.py", "maps_to": "Fig.3/6/9 @ 3000 trials 加固统计"}
+      ],
+      "closed_loop_checklist": [
+        {"item": "论文身份（IEEE TCOM 2025 · CA-CECC）", "ok": true, "note": "本地 PDF：5.8/Coding_Assisted_…pdf"},
+        {"item": "7 种方案全部可运行", "ok": true, "note": "CA-CECC + SS-I/II + CC/CMEC/CNCT/UNCT"},
+        {"item": "Section V 默认参数对齐", "ok": true, "note": "N,K,a_c,μ_c,τ₁,τ₂,ε,δ,λ 与论文一致"},
+        {"item": "Fig.3–10 已生成", "ok": true, "note": "outputs/ 与 reproduce/cases/ca-cecc/figs/"},
+        {"item": "关键工况 3000 次 MC + 排序表", "ok": true, "note": "ADVISOR_RANKING_TABLE.md @ 2026-05-20"},
+        {"item": "pytest 模型/方案 smoke", "ok": true, "note": "tests/test_models.py, test_schemes.py"},
+        {"item": "Section V 主要结论（排序/趋势）", "ok": true, "note": "四工况 CA-CECC 均为第 1；λ↑→E[T]↓；ε≥0.9 变差"},
+        {"item": "曲线逐点与 IEEE 原图数值重合", "ok": false, "note": "出图可做单调平滑；无 OCR 原图误差表"},
+        {"item": "CCDF 图试验规模与原文一致", "ok": false, "note": "Fig.5/8/10 默认约 800–1000 样本/曲线"},
+        {"item": "ε→1 时 CNCT 接近 CA-CECC（论文文字）", "ok": false, "note": "ε=0.9：CA-CECC 75.7 ms vs CNCT 383.8 ms，趋势提及但未数值贴近"}
+      ],
+      "vs_paper": [
+        {"axis": "问题与动机", "paper": "Straggler + 传输失败（衰落 + 云丢包）", "repro": "移位指数 + 指数衰落 + ε 广播", "match": "高"},
+        {"axis": "核心机制", "paper": "MDS + 云辅助 + 协作传输 + 通用节点", "repro": "ca_cecc.py Algorithm 1 时隙事件驱动", "match": "高"},
+        {"axis": "对比方案", "paper": "7 方案（含 SS-I/II）", "repro": "SCHEMES 注册表 7 方案齐全", "match": "高"},
+        {"axis": "仿真参数", "paper": "Section V Table", "repro": "SimParams 默认值一致", "match": "高"},
+        {"axis": "期望延迟 E[T]", "paper": "包级蒙特卡洛", "repro": "离散 τ₁ 时隙 + 3000 trials", "match": "高（实现路径一致）"},
+        {"axis": "Fig.3–10 相对关系", "paper": "CA-CECC 最优；UNCT/CC 等排序", "repro": "四工况排名与扫描趋势一致", "match": "高"},
+        {"axis": "单点数值", "paper": "IEEE 曲线读数", "repro": "未做逐点 OCR 对账", "match": "中（趋势一致）"}
+      ],
+      "result_rankings": [
+        {
+          "title": "λ = −100 dB（Fig.3 默认点）· 3000 trials",
+          "rows": [
+            {"rank": 1, "scheme": "CA-CECC", "et_ms": 40.76, "best": true},
+            {"rank": 2, "scheme": "CA-CECC-SS-II", "et_ms": 48.20},
+            {"rank": 3, "scheme": "CA-CECC-SS-I", "et_ms": 69.98},
+            {"rank": 4, "scheme": "CNCT-CECC", "et_ms": 382.01},
+            {"rank": 5, "scheme": "CMEC", "et_ms": 603.44},
+            {"rank": 6, "scheme": "CC", "et_ms": 2505.63},
+            {"rank": 7, "scheme": "UNCT-CECC", "et_ms": 2718.96}
+          ],
+          "note": "与论文「任意 λ 下 CA-CECC 最低、UNCT 最差」一致；CA-CECC 比 SS-II 约低 15%。"
+        },
+        {
+          "title": "ε = 0.9（Fig.6 极端丢包）· 3000 trials",
+          "rows": [
+            {"rank": 1, "scheme": "CA-CECC", "et_ms": 75.72, "best": true},
+            {"rank": 2, "scheme": "CA-CECC-SS-II", "et_ms": 195.50},
+            {"rank": 3, "scheme": "CNCT-CECC", "et_ms": 383.82},
+            {"rank": 4, "scheme": "CMEC", "et_ms": 603.66},
+            {"rank": 5, "scheme": "CA-CECC-SS-I", "et_ms": 2400.00},
+            {"rank": 6, "scheme": "UNCT-CECC", "et_ms": 3254.76},
+            {"rank": 7, "scheme": "CC", "et_ms": 15619.93}
+          ],
+          "note": "高 ε 时 SS-I 崩溃、CC 最差；CA-CECC 从 ~41 ms 升至 ~76 ms，与论文「ε 很大时性能明显变差」一致。"
+        }
+      ],
+      "result_sweeps": [
+        {
+          "title": "Fig.3 · CA-CECC E[T] vs λ（3000 trials，未平滑）",
+          "points": [
+            {"x": "-101.0 dB", "y": "43.1 ms"},
+            {"x": "-100.0 dB", "y": "40.8 ms"},
+            {"x": "-99.0 dB", "y": "32.5 ms"},
+            {"x": "-98.0 dB", "y": "21.9 ms"}
+          ],
+          "note": "λ 增大（信道变好）→ E[T] 单调下降，与论文 Fig.3 一致。"
+        },
+        {
+          "title": "Fig.6 · CA-CECC E[T] vs ε",
+          "points": [
+            {"x": "0.0", "y": "40.7 ms"},
+            {"x": "0.1", "y": "40.8 ms"},
+            {"x": "0.7", "y": "41.7 ms"},
+            {"x": "0.9", "y": "75.7 ms"}
+          ],
+          "note": "ε≤0.7 影响小；ε=0.9 陡升，与论文协作节点不足叙述一致。"
+        },
+        {
+          "title": "Fig.9 · CA-CECC E[T] vs K",
+          "points": [
+            {"x": "10", "y": "27.5 ms"},
+            {"x": "20", "y": "40.7 ms"},
+            {"x": "30", "y": "57.7 ms"}
+          ],
+          "note": "K 越大需收包越多，编码类方案变慢；CC/UNCT 随 K 几乎不变（见论文 Fig.9）。"
+        }
+      ],
+      "conclusion_check": [
+        {"claim": "任意 λ，CA-CECC 期望完成时间最低", "ok": true, "note": "λ 扫描 + 默认点七方案均第 1"},
+        {"claim": "SS-II 优于 SS-I；二者高于 CA-CECC", "ok": true, "note": "四工况均成立"},
+        {"claim": "UNCT 性能最差（低 ε）", "ok": true, "note": "λ=−100 dB 排名第 7"},
+        {"claim": "λ 增大 → 延迟下降", "ok": true, "note": "−101→−98 dB：43.1→21.9 ms"},
+        {"claim": "ε≤0.7 对 CA-CECC 影响小；ε 很大时明显变差", "ok": true, "note": "0.1–0.7 约 40–42 ms；0.9 为 75.7 ms"},
+        {"claim": "K 增大 → 编码方案变慢；CC/UNCT 几乎不变", "ok": true, "note": "Fig.9 扫描符合"},
+        {"claim": "CA-CECC 延迟最低但算法执行时间最高", "ok": true, "note": "Fig.4 已复现"},
+        {"claim": "ε→1 时 CNCT 接近 CA-CECC", "ok": false, "note": "本仿真 ε=0.9 仍差距大；仅趋势部分提及"}
+      ],
+      "how_to_run": [
+        "cd /d \"D:\\刚需\\实验\\Coding Assisted Cloud-Edge Collaborative Computing-F\"",
+        "pip install -r requirements.txt",
+        "python main.py --scheme CA-CECC --trials 3000",
+        "python main.py --plot --fig all --trials 3000",
+        "python scripts/run_advisor_3k.py"
+      ],
+      "figures": [
+        {"file": "fig3_latency_vs_lambda.png", "caption": "Fig.3 · 七方案 E[T] vs 平均衰落功率增益 λ"},
+        {"file": "fig6_latency_vs_epsilon.png", "caption": "Fig.6 · 七方案 E[T] vs 云丢包概率 ε"},
+        {"file": "fig9_latency_vs_K.png", "caption": "Fig.9 · 七方案 E[T] vs 恢复阈值 K"},
+        {"file": "fig4_latency_and_exec_time_vs_lambda.png", "caption": "Fig.4 · 延迟与算法执行时间 vs λ（CA-CECC 延迟最低、执行时间最高）"},
+        {"file": "fig5_ccdf_vs_lambda.png", "caption": "Fig.5 · CA-CECC 完成时间 CCDF vs λ"},
+        {"file": "fig7_latency_and_coop_vs_epsilon.png", "caption": "Fig.7 · CA-CECC 延迟与平均协作节点数 vs ε"},
+        {"file": "fig8_ccdf_vs_epsilon.png", "caption": "Fig.8 · CA-CECC 完成时间 CCDF vs ε"},
+        {"file": "fig10_ccdf_vs_K.png", "caption": "Fig.10 · CA-CECC 完成时间 CCDF vs K"}
+      ],
+      "gaps_priority": [
+        "CCDF 图统一提高到 ≥3000 trials，缩小尾部概率偏差",
+        "出图默认关闭单调平滑，附 paper vs sim 误差 CSV",
+        "补充 ε→1 工况与 CNCT 数值贴近度的原因分析（实现/截断/随机种子）"
+      ]
+    },
+    {
+      "id": "igto-grao",
+      "title": "IGTO/GRAO 博弈带宽分配与任务卸载复现",
+      "experiment_path": "D:\\刚需\\实验\\Game-Theoretic Bandwidth Allocation and Task Offloading in Cloud–Edge CollaborationGame-Theoretic Bandwidth Allocation and Task Offloading in Cloud–Edge Collaboration",
+      "package": "（根目录模块：algorithms / models / baselines / simulation）",
+      "section1_title": "1. 论文介绍 · 是否 IGTO/GRAO 模型？",
+      "closed_loop_intro": "闭环 =「Section VI-A 参数 → GRAO(Alg.1)+IGTO(Alg.2) → 五基线对比 → Fig.3–8 → 与 −49.8% / +34.2% 结论对账」。机制与出图链路完整；但论文未公开的 η/λ/ψ 需网格校准，且默认拓扑下 IGTO 与 ECU/EBAS 卸载路径几乎相同，**成本降幅远未达 49.8%**，不能称为完美数值闭环。",
+      "status": {
+        "model_label": "是 · IGTO + GRAO 模型",
+        "closed_loop": "partial",
+        "closed_loop_label": "部分闭环 · 趋势为主",
+        "score": 73,
+        "verdict": "完整实现 Stackelberg 双层博弈、GRAO 遗传带宽分配、IGTO 迭代定价与 ρ 分割，及 EBAS/GOS/LCS/ECU 基线；Fig.3–8 已生成。MEC 效用增益 +46.2%（论文 +34.2%）方向一致且略超；但相对最优基线成本仅 −0.2%（论文 −49.8%），Proposed≈ECU 因云回传 VN=1 Mb/s 过慢致 ρ_c→0；η/λ/ψ 未在正文给出，存在 display scale 与校准脚本。"
+      },
+      "paper": {
+        "title": "Game-Theoretic Bandwidth Allocation and Task Offloading in Cloud–Edge Collaboration",
+        "short": "云边协同下用 Stackelberg 博弈联合优化无线带宽分配（GRAO）与云价/卸载比例（IGTO），兼顾 MD 成本与 MEC/云效用",
+        "journal": "IEEE Internet of Things Journal",
+        "year": 2026,
+        "volume": "13",
+        "number": "10",
+        "pages": "22425–22439",
+        "doi": "10.1109/jiot.2026.3670700",
+        "authors": "Zhao Tong, Yuanyang Zhang, Jing Mei, Cen Chen, Keqin Li",
+        "local_pdf": "8.23/06_Game-Theoretic Bandwidth Allocation and Task Offloading in Cloud–Edge Collaboration.pdf",
+        "zone": "中科院一区 · IEEE IoT-J",
+        "intro": "面向 IoT 高算力需求，提出云–边混合框架：上层 MEC 作 Stackelberg 领导者定价并分配 PRB 带宽；下层 MD 决定本地/边缘/云分割比例 ρ。无线侧用博弈论做带宽分配（GRAO，遗传算法求 Nash）；卸载侧用 IGTO 对云价 q 与 ρ 迭代至均衡。理论证明两层均存在 Nash 均衡。",
+        "problem": "最小化 MD 加权成本（时延+能耗+定价）；最大化 MEC 效用 Eq.(19) 与云效用 Eq.(20)；满足带宽、算力与有益卸载约束。",
+        "method_stack": [
+          "云–边–端三层：MD ↔ MEC（无线 φ·b_n）↔ Cloud（有线 v_n）",
+          "GRAO · Algorithm 1：遗传算法优化 PRB 分配 φ（博弈带宽层）",
+          "有益卸载 + 扩展卸载决策（Section IV）",
+          "IGTO · Algorithm 2：Eq.(24) ρ 梯度 + Eq.(29) 云价更新 + Eq.(28) 投影",
+          "Stackelberg：MEC 定价引导 MD 云/边负载分割",
+          "对比基线 EBAS / GOS / LCS / ECU（Section VI-D）"
+        ]
+      },
+      "code_map": [
+        {"module": "config.py", "maps_to": "Section VI-A + Nomenclature；Fig.3/6/7/8 轴点；η/λ/ψ 校准项"},
+        {"module": "models/system_model.py", "maps_to": "式 (3)–(18) 时延/能耗/成本；有益卸载判定"},
+        {"module": "models/game_model.py", "maps_to": "Section V · Eq.(19)–(29) MEC/云效用、价格界、ρ 闭式解"},
+        {"module": "algorithms/grao.py", "maps_to": "Algorithm 1 · GRAO 遗传带宽分配"},
+        {"module": "algorithms/igto.py", "maps_to": "Algorithm 2 · IGTO 迭代博弈卸载"},
+        {"module": "baselines/baselines.py", "maps_to": "Proposed / EBAS / GOS / LCS / ECU"},
+        {"module": "simulation/experiments.py", "maps_to": "Fig.3–8 实验流水线 + print_summary"},
+        {"module": "paper_compare.py", "maps_to": "Section VI 定性目标与 Proposed≈ECU 根因诊断"},
+        {"module": "calibrate_paper.py / grid_search*.py", "maps_to": "η/λ/ψ/阻尼网格搜索（论文未公开参数）"}
+      ],
+      "closed_loop_checklist": [
+        {"item": "论文身份（IEEE IoT-J 2026 · IGTO/GRAO）", "ok": true, "note": "本地 PDF：8.23/06_Game-Theoretic…pdf；DOI 10.1109/jiot.2026.3670700"},
+        {"item": "Section VI-A 公开参数对齐", "ok": true, "note": "2×10 MD、100 MHz、10/100 GHz、u_nm=1e-8、GRAO N=50/200 代、IGTO α=0.1/1000 迭代"},
+        {"item": "GRAO + IGTO 核心算法", "ok": true, "note": "grao.py + igto.py 对应 Alg.1–2"},
+        {"item": "五基线齐全", "ok": true, "note": "EBAS/GOS/LCS/ECU + Proposed"},
+        {"item": "Fig.3–8 已生成", "ok": true, "note": "reproduce/cases/igto-grao/figs/"},
+        {"item": "Stackelberg 收敛趋势（Fig.3）", "ok": true, "note": "q、ρ 随迭代收敛；M 增大 → q 升、云比例降（Fig.3 专用阻尼/Eq.28）"},
+        {"item": "Fig.4–8 定性趋势", "ok": true, "note": "距离↑本地↑；带宽↑成本↓；算力/MD 数↑效用↑后趋平；Proposed MEC 效用最高"},
+        {"item": "论文 headline：成本 −49.8%", "ok": false, "note": "默认 seed：相对最优基线 −0.2%；相对 LCS 约 −9.7%（display scale）"},
+        {"item": "论文 headline：MEC 效用 +34.2%", "ok": true, "note": "默认 seed：+46.2% vs ECU（同向，数值偏高）"},
+        {"item": "Proposed MD 成本严格最优", "ok": false, "note": "IGTO 8.22 略高于 EBAS/ECU 8.20；与 paper_compare 根因分析一致"},
+        {"item": "η/λ/ψ 无网格搜索即可复现 headline", "ok": false, "note": "Nomenclature 未给出；calibrate_paper 仍无法同时满足成本与效用双 headline"},
+        {"item": "自动 paper-digit OCR 对账", "ok": false, "note": "extract_paper_figs.py 存在但未纳入主流程误差表"}
+      ],
+      "conclusion_check": [
+        {"claim": "IGTO 相对最优基线降低 MD 平均成本 49.8%", "ok": false, "note": "实测 −0.2%；相对 LCS 约 9.7%"},
+        {"claim": "IGTO 提升 MEC 服务器效用 34.2%（相对最优基线）", "ok": true, "note": "实测 +46.2% vs ECU/EBAS（η 校准后同量级）"},
+        {"claim": "Proposed 在带宽/算力/MD 数扫描中 MEC 效用最优", "ok": true, "note": "Fig.6–8 趋势与 README/paper_compare 一致"},
+        {"claim": "Proposed MD 成本在扫描中最低", "ok": false, "note": "默认点 EBAS/ECU 略优；带宽增大时差距缩小"},
+        {"claim": "LCS 成本最高", "ok": true, "note": "五方案中 LCS 9.10 vs Proposed 8.22（display）"},
+        {"claim": "距离增大 → 边缘/云卸载比例下降", "ok": true, "note": "Fig.4 堆叠柱：本地占比上升"},
+        {"claim": "两层 Nash 均衡存在（理论）", "ok": true, "note": "algorithms/theory_verify.py 提供验证脚本；未自动断言"}
+      ],
+      "result_rankings": [
+        {
+          "title": "默认参数 · seed=42 · NUM_RUNS=5 均值（display 刻度，见 config COST_DISPLAY_SCALE）",
+          "value_header": "MD 成本 (display)",
+          "value_key": "metric",
+          "rows": [
+            {"rank": 1, "scheme": "EBAS", "metric": "8.20", "best": true},
+            {"rank": 1, "scheme": "ECU", "metric": "8.20", "best": true},
+            {"rank": 3, "scheme": "IGTO (Proposed)", "metric": "8.22"},
+            {"rank": 4, "scheme": "GOS", "metric": "8.22"},
+            {"rank": 5, "scheme": "LCS", "metric": "9.10"}
+          ],
+          "note": "论文声称 IGTO 成本最低；本复现中 GRAO 带宽优势不足以抵消 IGTO 与 ECU 几乎相同的 ρ_c≈0 卸载路径。"
+        },
+        {
+          "title": "同工况 · MEC 效用 (display)",
+          "value_header": "MEC 效用 (display)",
+          "value_key": "metric",
+          "rows": [
+            {"rank": 1, "scheme": "IGTO (Proposed)", "metric": "1.18", "best": true},
+            {"rank": 2, "scheme": "EBAS / GOS / ECU", "metric": "0.81"},
+            {"rank": 3, "scheme": "LCS", "metric": "0.00"}
+          ],
+          "note": "raw edge utility：IGTO 10.05 vs ECU 6.87 → +46.2%（论文目标 +34.2%）。"
+        }
+      ],
+      "result_sweeps": [
+        {
+          "title": "相对 LCS · IGTO 成本降幅",
+          "points": [
+            {"x": "论文 headline", "y": "−49.8%"},
+            {"x": "本复现 vs LCS", "y": "−9.7%"},
+            {"x": "本复现 vs 最优基线 EBAS/ECU", "y": "−0.2%（略差）"}
+          ],
+          "note": "paper_compare.py 与 main.py --exp summary 同源输出。"
+        },
+        {
+          "title": "MEC 效用增益 vs ECU",
+          "points": [
+            {"x": "论文 headline", "y": "+34.2%"},
+            {"x": "本复现 default", "y": "+46.2%"}
+          ],
+          "note": "ETA=0.0864 等校准参数拉高 Eq.(19) 对数项；未同时复现成本 headline。"
+        },
+        {
+          "title": "Fig.6 带宽轴（定性）",
+          "points": [
+            {"x": "1 MHz", "y": "成本高、效用低"},
+            {"x": "146 MHz", "y": "成本降、MEC 效用升；Proposed 领先"}
+          ],
+          "note": "与 paper_compare figure_trends.fig6 一致；绝对柱高受 display scale 影响。"
+        }
+      ],
+      "vs_paper": [
+        {"axis": "问题与架构", "paper": "云边协同 + Stackelberg 定价 + 带宽博弈", "repro": "system_model + game_model 式 (3)–(29)", "match": "高"},
+        {"axis": "核心算法", "paper": "GRAO (GA) + IGTO (迭代)", "repro": "grao.py + igto.py", "match": "高"},
+        {"axis": "基线", "paper": "EBAS/GOS/LCS/ECU", "repro": "baselines.py 五方案", "match": "高"},
+        {"axis": "仿真参数", "paper": "Section VI-A Table/Nomenclature", "repro": "config 默认值一致", "match": "高"},
+        {"axis": "隐藏参数 η/λ/ψ", "paper": "正文未给出", "repro": "ETA/LAMBDA_CLOUD/PSI_DELAY + 网格校准", "match": "低（推测）"},
+        {"axis": "Fig.3–8", "paper": "6 组实验图", "repro": "fig3–fig8 已出", "match": "高（趋势）"},
+        {"axis": "成本 −49.8%", "paper": "Abstract/Section VI 结论", "repro": "未复现；≈0% vs best baseline", "match": "低"},
+        {"axis": "MEC 效用 +34.2%", "paper": "Section VI 结论", "repro": "+46.2% 同向", "match": "中–高"}
+      ],
+      "figures": [
+        {"file": "fig3_convergence.png", "caption": "Fig.3 · Stackelberg 博弈迭代：云价 q 与云任务比例 ρ 收敛（M=10/20/30/40）"},
+        {"file": "fig4_distance.png", "caption": "Fig.4 · MD–MEC 距离对本地/边缘/云任务比例的影响（堆叠柱）"},
+        {"file": "fig5_pricing.png", "caption": "Fig.5 · MEC 单位定价对 MD 成本与 MEC 效用的影响"},
+        {"file": "fig6_bandwidth.png", "caption": "Fig.6 · 信道带宽扫描：五方案 MD 成本与 MEC 效用（分组柱）"},
+        {"file": "fig7_compute.png", "caption": "Fig.7 · MEC 算力扫描：MEC 效用与云效用曲线"},
+        {"file": "fig8_num_mds.png", "caption": "Fig.8 · MD 数量扫描：MEC/云效用（分组柱）"}
+      ],
+      "gaps_priority": [
+        "核对 wired 链路 v_n、云路径是否应与论文 Fig.4 一致（当前 VN=1 Mb/s 导致 ρ_c→0，Proposed≈ECU）",
+        "向作者确认 η/λ/ψ 与 Section VI 随机拓扑种子；关闭 COST_DISPLAY_SCALE 做 raw 对账 CSV",
+        "在 cloud 卸载可受益的参数区复跑 headline −49.8% 是否可达",
+        "paper_compare --diag 纳入 CI 或固定多 seed 报告成本/效用置信区间"
+      ],
+      "how_to_run": [
+        "cd /d \"D:\\刚需\\实验\\Game-Theoretic Bandwidth Allocation and Task Offloading in Cloud–Edge CollaborationGame-Theoretic Bandwidth Allocation and Task Offloading in Cloud–Edge Collaboration\"",
+        "pip install -r requirements.txt",
+        "python main.py",
+        "python main.py --exp summary",
+        "python paper_compare.py --diag"
+      ]
+    },
+    {
+      "id": "bsec-iot",
+      "title": "区块链安全在线边云协作（LMI+PPO）复现",
+      "experiment_path": "D:\\刚需\\实验\\Blockchain-Secured Online Edge Collaboration in IoT Integrating Convex Optimization and Learning Approach",
+      "package": "src（论文复现）；innovation/ 为 BCGM-HMAPPO 扩展，非本篇",
+      "section1_title": "1. 论文介绍 · 是否 LMI+PPO 区块链协作模型？",
+      "closed_loop_intro": "闭环 =「Table III 参数 → Algorithm 1 LMI 资源分配 + Algorithm 2 PPO 协作 → PSwo* 基线 → Fig.2–8 → 单元测试/数值回归」。本仓库机制完整、Fig.2–8 定性对齐且回归通过；PyTorch 重实现、reward_scale 校准，**不保证与原文曲线逐点一致**，故为接近闭环而非完美数值闭环。",
+      "status": {
+        "model_label": "是 · LMI + PPO + 区块链协作",
+        "closed_loop": "partial",
+        "closed_loop_label": "接近闭环 · 定性一致",
+        "score": 82,
+        "verdict": "完整实现 Section III 系统模型、Algorithm 1（LMI 凸优化资源分配）、Algorithm 2（PPO 边云协作+区块生产者选择）、区块链延迟与安全约束，及 PSwoPRA/BRA/CRA/EC/BS 基线；Fig.2–8 已生成，ALIGNMENT_SUMMARY 七图验收通过；6 项单元测试+数值回归通过。相对纯 DRL/随机基线排序与论文一致，奖励/效用绝对刻度经 reward_scale=8e7 对齐，非像素级复刻。"
+      },
+      "paper": {
+        "title": "Blockchain-Secured Online Edge Collaboration in IoT: Integrating Convex Optimization and Learning Approach",
+        "short": "区块链作可信顶层，Lyapunov 在线框架联合优化边云协作、资源分配与区块生产者选择；LMI 解凸子问题 + PPO 学协作策略",
+        "journal": "IEEE Internet of Things Journal",
+        "year": 2025,
+        "volume": "12",
+        "number": "21",
+        "pages": "22425+",
+        "doi": "10.1109/JIOT.2025.3600299",
+        "authors": "Yueqiang Xu, Zhi Liu, Jiaxin Li, Jing Jiang, Heli Zhang, Zhibin Liu, Fuhong Lin",
+        "local_pdf": "5.31/Blockchain-Secured_Online_Edge_Collaboration_in_IoT_Integrating_Convex_Optimization_and_Learning_Approach.pdf",
+        "zone": "中科院一区 · IEEE IoT-J",
+        "intro": "IoT 边云协作面临安全交互、在线任务调度、异构资源管理三重挑战。本文提出区块链在线协作框架：链上共享协作与资源决策、DPoS 选块；双虚拟队列管理随机到达任务；长期系统效用最大化（协作+资源+区块生产者），约束队列稳定与安全。因变量耦合且跨时隙，采用 Lyapunov 漂移加惩罚，将问题分解为每时隙 LMI 凸优化（带宽/算力/功率）与 DRL 协作决策。",
+        "problem": "最大化长期系统效用 Φ（Eq.18）；约束队列稳定、区块链安全（C12 等）、资源上界；在线到达任务与异构边缘服务器。",
+        "method_stack": [
+          "Section III：双队列（用户侧 Q_user、边缘 Q_mec）、信道/能耗/区块链时延模型",
+          "Algorithm 1：LMI-based 资源 allocation（带宽/CPU/功率，凸优化迭代）",
+          "Algorithm 2：PPO 学习协作矩阵 + 卸载比例 + 区块生产者（HybridActor：离散+连续）",
+          "奖励 Eq.(51)：可行时 w1·Φ，否则 0；状态 Eq.(49)",
+          "区块链：生成/传播/验证延迟；PSwoBS 为无链安全对照",
+          "基线 PSwoPRA / PSwoBRA / PSwoCRA / PSwoEC / PSwoBS"
+        ]
+      },
+      "code_map": [
+        {"module": "src/config.py", "maps_to": "Table III：Δt=50ms, F_max, B_max, P_max, ρ, d_blo, V 等"},
+        {"module": "src/system.py", "maps_to": "Section III 系统模型、协作动作、队列演化"},
+        {"module": "src/resource_allocation.py", "maps_to": "Algorithm 1 · LMI 资源分配 + 收敛 trace"},
+        {"module": "src/ppo_agent.py", "maps_to": "Algorithm 2 · PPO/HybridActor 训练与推理"},
+        {"module": "src/simulator.py", "maps_to": "PSwo* 基线、run_episode、Fig.7 安全攻击、回归测试"},
+        {"module": "src/experiments.py", "maps_to": "Fig.2–8 出图；paper_strict 200ep 纯 PPO"},
+        {"module": "src/drl_baselines.py", "maps_to": "Fig.5 DDPG / Dueling DQN 对比"},
+        {"module": "run_all.py", "maps_to": "一键复现 + --check-regression / --save-baseline"},
+        {"module": "scripts/build_comparison_docx.py", "maps_to": "论文原图 vs 复现并排对比报告"}
+      ],
+      "closed_loop_checklist": [
+        {"item": "论文身份（IEEE IoT-J 2025 · Xu et al.）", "ok": true, "note": "本地 PDF：5.31/Blockchain-Secured_…pdf"},
+        {"item": "Table III 参数与 config 默认值", "ok": true, "note": "README 参数对照表；paper_strict_config() 200ep×100 steps"},
+        {"item": "Algorithm 1 LMI + Algorithm 2 PPO", "ok": true, "note": "resource_allocation.py + ppo_agent.py"},
+        {"item": "基线 PSwoPRA/BRA/CRA/EC/BS", "ok": true, "note": "simulator.py MODE_MAP"},
+        {"item": "Fig.2–8 已生成", "ok": true, "note": "reproduce/cases/bsec-iot/figs/（源自 results/figures/）"},
+        {"item": "单元测试 + 数值回归", "ok": true, "note": "run_all.py --check-regression 通过（regression_log.txt）"},
+        {"item": "Fig.2–8 定性趋势 vs 论文", "ok": true, "note": "results/ALIGNMENT_SUMMARY.md 七图全部「通过」"},
+        {"item": "曲线/奖励逐点与 IEEE 原图重合", "ok": false, "note": "README 明确不保证；build_comparison_docx 标注尺度差异"},
+        {"item": "与原文同深度学习框架", "ok": false, "note": "论文 TensorFlow；本仓库 PyTorch"},
+        {"item": "Fig.3 队列形态像素一致", "ok": false, "note": "稳定/发散边界一致；绝对曲线形态可能有差"}
+      ],
+      "conclusion_check": [
+        {"claim": "Proposed 系统效用/奖励优于 PSwo* 随机基线与纯 DRL", "ok": true, "note": "Fig.4 proposed 效用最高；Fig.5 Proposed 全程最高"},
+        {"claim": "Fig.2：64 神经元 PPO 收敛最优；LMI ~10 次迭代收敛", "ok": true, "note": "复现 64 终值最高，LMI 7–10 次稳定"},
+        {"claim": "Fig.3：0.6 Mbit 队列稳定，0.8 Mbit 发散", "ok": true, "note": "用户/边缘稳定边界与论文一致"},
+        {"claim": "Fig.4：proposed 双侧队列稳定；PSwoCRA 边缘发散", "ok": true, "note": "PSwoCRA 边缘 ~460 Mbit 发散模式一致"},
+        {"claim": "Fig.5：Proposed > Pure PPO > DDPG/DQN；DDPG 后期退化", "ok": true, "note": "Proposed 88–98；DDPG ~140 ep 后崩溃"},
+        {"claim": "Fig.6：V 增大队列减小；任务量增大队列增大", "ok": true, "note": "四条数据量曲线分离"},
+        {"claim": "Fig.7：算力攻击边缘发散；带宽攻击用户上升；proposed 稳定", "ok": true, "note": "攻击触发 slot ~300/500 与论文一致"},
+        {"claim": "Fig.8：生成延迟 U 形（~16 节点最低）；总延迟 16 节点后上升", "ok": true, "note": "区块链延迟形态完全一致"},
+        {"claim": "数值回归 baseline 与 proposed 效用一致", "ok": true, "note": "metrics.json：utility delta ≈ −3172 on ~49M（可忽略）"}
+      ],
+      "result_rankings": [
+        {
+          "title": "Fig.4(b) · 系统效用排序（多数据量扫描，定性）",
+          "value_header": "相对排序",
+          "value_key": "metric",
+          "rows": [
+            {"rank": 1, "scheme": "Proposed（LMI+PPO+链）", "metric": "最高", "best": true},
+            {"rank": 2, "scheme": "PSwoEC", "metric": "次之"},
+            {"rank": 3, "scheme": "random / PSwoPRA 等", "metric": "更低"}
+          ],
+          "note": "与 build_comparison_docx：proposed > PSwoEC > random 一致。"
+        },
+        {
+          "title": "Fig.5 · DRL 系统奖励（200 ep 训练后，paper-full 日志）",
+          "value_header": "终值区间",
+          "value_key": "metric",
+          "rows": [
+            {"rank": 1, "scheme": "Proposed (LMI+PPO)", "metric": "88–98", "best": true},
+            {"rank": 2, "scheme": "Pure PPO", "metric": "~40–60"},
+            {"rank": 3, "scheme": "DDPG-based", "metric": "140 ep 后崩溃"},
+            {"rank": 4, "scheme": "random", "metric": "55–61 最低"}
+          ],
+          "note": "排序与论文一致；y 轴经 reward_scale=8e7 对齐 Fig.5 量级。"
+        }
+      ],
+      "result_sweeps": [
+        {
+          "title": "Fig.2 · PPO 隐藏层神经元",
+          "points": [
+            {"x": "32", "y": "收敛最低"},
+            {"x": "64", "y": "最优（论文 & 复现）"},
+            {"x": "128", "y": "略低（过拟合）"}
+          ],
+          "note": "与 ALIGNMENT_SUMMARY Fig.2 一致。"
+        },
+        {
+          "title": "Fig.8 · 区块链总延迟 vs 边缘节点数",
+          "points": [
+            {"x": "9 节点", "y": "总延迟较高"},
+            {"x": "16 节点", "y": "生成延迟谷底；总延迟拐点"},
+            {"x": "29 节点", "y": "传播线性增，总延迟再升"}
+          ],
+          "note": "U 形生成 + 线性传播与论文 Fig.8 形态一致。"
+        },
+        {
+          "title": "数值回归（seed=42 单步 fixture）",
+          "points": [
+            {"x": "constraints_ok_step", "y": "1.0"},
+            {"x": "blockchain_n10_total_ms", "y": "50 ms"},
+            {"x": "proposed vs PSwoBS utility delta", "y": "≈0（−0.006%）"}
+          ],
+          "note": "results/baseline/metrics.json · run_all.py --check-regression"
+        }
+      ],
+      "vs_paper": [
+        {"axis": "问题与框架", "paper": "区块链 + Lyapunov 在线边云协作", "repro": "system.py + 双队列 + 效用 Φ", "match": "高"},
+        {"axis": "Algorithm 1 LMI", "paper": "凸优化资源分配", "repro": "resource_allocation.py + lmi_convergence_trace", "match": "高"},
+        {"axis": "Algorithm 2 PPO", "paper": "DRL 协作+选块", "repro": "HybridActor PPO（PyTorch）", "match": "高（实现栈不同）"},
+        {"axis": "基线 PSwo*", "paper": "随机功率/带宽/算力 + 无链对照", "repro": "simulator.py 五基线", "match": "高"},
+        {"axis": "Table III 参数", "paper": "Section VI", "repro": "SimConfig / paper_strict_config", "match": "高"},
+        {"axis": "Fig.2–8 趋势", "paper": "七组仿真图", "repro": "ALIGNMENT_SUMMARY 全部通过", "match": "高"},
+        {"axis": "Fig.2–8 绝对读数", "paper": "IEEE 原曲线", "repro": "未 OCR 逐点对账", "match": "中（趋势一致）"},
+        {"axis": "安全/区块链", "paper": "C12 + Fig.7/8", "repro": "measure_blockchain_latencies + 攻击时序", "match": "高"}
+      ],
+      "figures": [
+        {"file": "fig2_convergence.png", "caption": "Fig.2 · (a) PPO 神经元收敛对比；(b) LMI 资源分配迭代收敛"},
+        {"file": "fig3_queue_status.png", "caption": "Fig.3 · 用户/边缘队列：0.6 Mbit 稳定 vs 0.8 Mbit 发散"},
+        {"file": "fig4_performance.png", "caption": "Fig.4 · (a) 队列稳定性；(b) 基线系统效用 vs 任务数据量"},
+        {"file": "fig5_drl_comparison.png", "caption": "Fig.5 · Proposed / Pure PPO / DDPG / DQN / random 系统奖励"},
+        {"file": "fig6_penalty_weight.png", "caption": "Fig.6 · Lyapunov 惩罚权重 V 对队列的影响"},
+        {"file": "fig7_security.png", "caption": "Fig.7 · 安全攻击下 proposed 稳定 vs PSwoBS 被篡改"},
+        {"file": "fig8_blockchain_nodes.png", "caption": "Fig.8 · 边缘节点数对区块链生成/传播/验证/总延迟"}
+      ],
+      "gaps_priority": [
+        "补充 paper vs sim 逐图 OCR/读数误差 CSV（可复用 build_comparison_docx 裁剪原图）",
+        "Fig.3 队列绝对形态与原文进一步对齐（检查到达率/本地算力 f_user）",
+        "同目录 innovation/ BCGM-HMAPPO 为扩展研究，勿与本篇 Xu 2025 复现混淆",
+        "完整 paper-strict 复跑需 PyTorch 环境正常（当前部分环境 torch 导入偶发失败）"
+      ],
+      "how_to_run": [
+        "cd /d \"D:\\刚需\\实验\\Blockchain-Secured Online Edge Collaboration in IoT Integrating Convex Optimization and Learning Approach\"",
+        "pip install -r requirements.txt",
+        "python run_all.py --check-regression",
+        "python run_all.py",
+        "python scripts/build_comparison_docx.py"
+      ]
+    }
+  ]
+}

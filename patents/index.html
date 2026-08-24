@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>专利对照 · EdgeNexus 边云合智</title>
+<link rel="icon" href="../search/assets/favicon.svg" type="image/svg+xml">
+<script src="../search/assets/site.js"></script>
+<style>
+  :root {
+    --bg: #f0f4f8; --card: #fff; --primary: #1a478a; --accent: #2e7d32;
+    --text: #333; --muted: #888; --border: #dde3ea; --us: #1565c0; --cn: #c62828;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .site-nav {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 28px; height: 52px;
+    background: #0f2f5c; border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  .site-nav .brand {
+    display: inline-flex; align-items: center; gap: 10px;
+    color: #fff; font-weight: 700; font-size: .98rem; text-decoration: none;
+  }
+  .site-nav .brand img { width: 28px; height: 28px; border-radius: 7px; }
+  .site-nav .links { display: flex; gap: 6px; flex-wrap: wrap; }
+  .site-nav .links a {
+    color: rgba(255,255,255,.78); text-decoration: none; font-size: .9rem; font-weight: 600;
+    padding: 8px 14px; border-radius: 8px; transition: background .15s, color .15s;
+  }
+  .site-nav .links a:hover { background: rgba(255,255,255,.1); color: #fff; }
+  .site-nav .links a.active { background: rgba(255,255,255,.16); color: #fff; }
+  header { background: linear-gradient(135deg, #1a478a, #2563b0); color: #fff; padding: 28px 32px; }
+  header h1 { font-size: 1.55rem; font-weight: 700; }
+  header p { opacity: .88; margin-top: 8px; font-size: .95rem; max-width: 920px; line-height: 1.55; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 24px 20px 48px; }
+  .section-title {
+    font-size: 1.05rem; font-weight: 700; color: var(--primary);
+    margin: 28px 0 12px; padding-left: 10px; border-left: 4px solid var(--accent);
+  }
+  .grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+  @media (min-width: 900px) { .grid.pair { grid-template-columns: 1fr 1fr; } }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px 18px 16px; box-shadow: 0 1px 3px rgba(26,71,138,.04);
+  }
+  .card-top { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+  .badge {
+    display: inline-block; padding: 3px 10px; border-radius: 999px;
+    font-size: .72rem; font-weight: 700; letter-spacing: .01em;
+  }
+  .badge-us { background: #e3f2fd; color: var(--us); }
+  .badge-cn { background: #fce4ec; color: var(--cn); }
+  .badge-local-yes { background: #e8f5e9; color: #2e7d32; }
+  .badge-local-no { background: #fff3e0; color: #e65100; }
+  .badge-group { background: #f3e5f5; color: #6a1b9a; }
+  .pid { font-family: ui-monospace, Consolas, monospace; font-weight: 700; color: var(--primary); font-size: 1.02rem; }
+  .focus { font-size: .92rem; font-weight: 600; color: #444; margin: 4px 0 2px; }
+  .title-zh { font-size: .88rem; color: #555; line-height: 1.45; }
+  .title-en { font-size: .8rem; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+  .meta { font-size: .78rem; color: var(--muted); margin-top: 10px; line-height: 1.55; }
+  .block { margin-top: 12px; }
+  .block h4 { font-size: .78rem; color: var(--primary); margin-bottom: 4px; text-transform: none; letter-spacing: 0; }
+  .block p { font-size: .86rem; color: #444; line-height: 1.6; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .tag { font-size: .72rem; padding: 2px 8px; border-radius: 6px; background: #eef2f7; color: #456; }
+  .actions { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .btn {
+    display: inline-block; padding: 6px 12px; border-radius: 7px; font-size: .8rem;
+    font-weight: 600; text-decoration: none; color: #fff; background: var(--primary);
+  }
+  .btn:hover { background: #2563b0; }
+  .btn.ghost { background: #fff; color: var(--primary); border: 1px solid #bbdefb; }
+  .btn.ghost:hover { background: #e3f2fd; }
+  .btn.disabled { opacity: .45; pointer-events: none; }
+  .analysis-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 12px; }
+  .analysis-card h3 { font-size: .95rem; color: var(--primary); margin-bottom: 8px; }
+  .analysis-card p { font-size: .88rem; line-height: 1.65; color: #444; }
+  table.compare {
+    width: 100%; border-collapse: collapse; font-size: .78rem; background: var(--card);
+    border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+  }
+  table.compare th, table.compare td {
+    border-bottom: 1px solid var(--border); padding: 10px 8px; text-align: left; vertical-align: top; line-height: 1.45;
+  }
+  table.compare th { background: #e8eef5; color: var(--primary); font-weight: 700; white-space: nowrap; }
+  table.compare tr:last-child td { border-bottom: none; }
+  table.compare td:first-child { font-weight: 700; color: #555; white-space: nowrap; }
+  .takeaways { list-style: none; }
+  .takeaways li {
+    position: relative; padding: 10px 12px 10px 28px; margin-bottom: 8px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    font-size: .88rem; line-height: 1.6; color: #444;
+  }
+  .takeaways li::before {
+    content: ""; position: absolute; left: 12px; top: 16px;
+    width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+  }
+  .note { font-size: .8rem; color: var(--muted); margin-top: 8px; }
+  .err { color: #c62828; padding: 24px; }
+</style>
+</head>
+<body>
+<nav class="site-nav" aria-label="站点导航">
+  <a class="brand" href="../search/index.html">
+    <img src="../search/assets/favicon.svg" alt="">
+    <span>EdgeNexus · 边云合智</span>
+  </a>
+  <div class="links">
+    <a href="../search/index.html">文献检索</a>
+    <a href="index.html" class="active">专利对照</a>
+    <a href="../reproduce/index.html">复现案例</a>
+    <a href="../videos/index.html">会议视频</a>
+    <a href="../projects/index.html">项目管理</a>
+    <a href="../briefing/index.html">开学汇报</a>
+    <a href="../waic/index.html">WAIC 学习</a>
+  </div>
+</nav>
+<header>
+  <h1>专利对照 · 云边协同编排 / 调度 / 卸载</h1>
+  <p>四件专利按「首轮推荐 + 同体例仿写」成对收录：国外偏系统编排，国内偏方法与学习型调度。本地 PDF 可直接打开；缺文件时跳转 Google Patents。</p>
+</header>
+<div class="wrap">
+  <div id="app"><p class="note">加载中…</p></div>
+</div>
+<script>
+async function load() {
+  const app = document.getElementById('app');
+  let data;
+  try {
+    const r = await fetch('patents.json?_=' + Date.now());
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    data = await r.json();
+  } catch (e) {
+    app.innerHTML = '<p class="err">无法加载 patents.json。请用本地服务打开本页（open.bat），勿直接双击 HTML。</p>';
+    return;
+  }
+
+  const byId = Object.fromEntries(data.patents.map(p => [p.id, p]));
+  const primary = data.patents.filter(p => p.group === 'primary');
+  const companion = data.patents.filter(p => p.group === 'companion');
+
+  function card(p) {
+    const isUS = p.jurisdiction === 'US';
+    const hasLocal = !!p._local;
+    const pdfHref = hasLocal ? p.local_file : p.google_url;
+    const openLabel = hasLocal ? '打开本地 PDF' : '本地缺失 · Google Patents';
+    const openCls = hasLocal ? 'btn' : 'btn ghost';
+    const tags = (p.keywords || []).map(k => `<span class="tag">${esc(k)}</span>`).join('');
+    return `<article class="card" id="${esc(p.id)}">
+      <div class="card-top">
+        <span class="badge ${isUS ? 'badge-us' : 'badge-cn'}">${isUS ? 'US' : 'CN'}</span>
+        <span class="badge badge-group">${esc(p.group_label)}</span>
+        <span class="badge ${hasLocal ? 'badge-local-yes' : 'badge-local-no'}">${hasLocal ? '本地已有' : '本地未找到'}</span>
+      </div>
+      <div class="pid">${esc(p.id)}</div>
+      <div class="focus">${esc(p.focus)}</div>
+      <div class="title-zh">${esc(p.title_zh)}</div>
+      <div class="title-en">${esc(p.title_en)}</div>
+      <div class="meta">
+        ${esc(p.assignee || '')}<br>
+        ${p.grant_date ? ('授权/公开：' + esc(p.grant_date)) : ''}
+        ${p.filing_date ? (' · 申请：' + esc(p.filing_date)) : ''}
+        ${p.application_number ? (' · 申请号：' + esc(p.application_number)) : ''}
+      </div>
+      <div class="block"><h4>问题</h4><p>${esc(p.problem)}</p></div>
+      <div class="block"><h4>方法要点</h4><p>${esc(p.method)}</p></div>
+      <div class="block"><h4>权利要求重心</h4><p>${esc(p.claims_focus)}</p></div>
+      <div class="block"><h4>与云边协同研究的关联</h4><p>${esc(p.relevance)}</p></div>
+      <div class="tags">${tags}</div>
+      <div class="actions">
+        <a class="${openCls}" href="${pdfHref}" target="_blank" rel="noopener">${openLabel}</a>
+        <a class="btn ghost" href="${esc(p.google_url)}" target="_blank" rel="noopener">Google Patents</a>
+      </div>
+    </article>`;
+  }
+
+  // probe local PDF files under patents/files/
+  await Promise.all(data.patents.map(async p => {
+    if (!p.local_file) { p._local = false; return; }
+    try {
+      const r = await fetch(p.local_file, { method: 'HEAD' });
+      if (r.ok) { p._local = true; return; }
+    } catch (_) {}
+    try {
+      const r = await fetch(p.local_file, { method: 'GET' });
+      p._local = r.ok;
+      if (r.body && r.body.cancel) try { r.body.cancel(); } catch (_) {}
+    } catch (_) {
+      p._local = false;
+    }
+  }));
+
+  let html = '';
+  html += `<p class="note">更新：${esc(data.updated || '')} · 共 ${data.patents.length} 件 · 本地可用 ${data.patents.filter(p => p._local).length} 件</p>`;
+
+  html += `<h2 class="section-title">首轮推荐</h2><div class="grid pair">${primary.map(card).join('')}</div>`;
+  html += `<h2 class="section-title">同体例仿写</h2><div class="grid pair">${companion.map(card).join('')}</div>`;
+
+  html += `<h2 class="section-title">成对分析</h2>`;
+  for (const pair of (data.analysis?.pairing || [])) {
+    html += `<div class="analysis-card"><h3>${esc(pair.title)}</h3>
+      <p><strong>${esc(pair.us)}</strong> ↔ <strong>${esc(pair.cn)}</strong>：${esc(pair.point)}</p></div>`;
+  }
+
+  const matrix = data.analysis?.compare_matrix || [];
+  if (matrix.length) {
+    const ids = ['US12160341B1', 'CN121029434B', 'US11627095B2', 'CN119697701B'];
+    html += `<h2 class="section-title">对照矩阵</h2>
+      <div style="overflow-x:auto"><table class="compare"><thead><tr>
+        <th>维度</th>${ids.map(id => `<th>${esc(id)}</th>`).join('')}
+      </tr></thead><tbody>`;
+    for (const row of matrix) {
+      html += `<tr><td>${esc(row.axis)}</td>${ids.map(id => `<td>${esc(row[id] || '')}</td>`).join('')}</tr>`;
+    }
+    html += `</tbody></table></div>`;
+  }
+
+  html += `<h2 class="section-title">可带走的结论</h2><ul class="takeaways">`;
+  for (const t of (data.analysis?.takeaways || [])) {
+    html += `<li>${esc(t)}</li>`;
+  }
+  html += `</ul>`;
+
+  app.innerHTML = html;
+}
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+load();
+</script>
+</body>
+</html>
