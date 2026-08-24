@@ -1,4 +1,6 @@
-# EdgeNexus deploy to GitHub Pages (UTF-8 safe)
+# Default repo for qazplmygc/postgraduate-project — override via prompt if needed
+$DEFAULT_USER = "qazplmygc"
+$DEFAULT_REPO = "postgraduate-project"
 $ErrorActionPreference = "Stop"
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
@@ -35,14 +37,10 @@ if (-not $hasOrigin) {
     Write-Host "Create a PUBLIC repo on GitHub first: https://github.com/new" -ForegroundColor White
     Write-Host "Repo name suggestion: edgenexus" -ForegroundColor White
     Write-Host ""
-    $ghUser = Read-Host "Your GitHub username"
-    if ([string]::IsNullOrWhiteSpace($ghUser)) {
-        Write-Host "Cancelled: no username." -ForegroundColor Red
-        Read-Host "Press Enter to exit"
-        exit 1
-    }
-    $repo = Read-Host "Repo name [edgenexus]"
-    if ([string]::IsNullOrWhiteSpace($repo)) { $repo = "edgenexus" }
+    $ghUser = Read-Host "Your GitHub username [$DEFAULT_USER]"
+    if ([string]::IsNullOrWhiteSpace($ghUser)) { $ghUser = $DEFAULT_USER }
+    $repo = Read-Host "Repo name [$DEFAULT_REPO]"
+    if ([string]::IsNullOrWhiteSpace($repo)) { $repo = $DEFAULT_REPO }
     $url = "https://github.com/$ghUser/$repo.git"
     Write-Host "[2/5] git remote add origin $url" -ForegroundColor Yellow
     git remote add origin $url
