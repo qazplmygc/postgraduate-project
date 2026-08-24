@@ -87,13 +87,6 @@
     if (isLocalDev()) return;
     if (document.getElementById('edgenexus-static-banner')) return;
 
-    if (kind === 'bad-cdn') {
-      const path = location.pathname.split('/').slice(-2).join('/');
-      const target = pagesUrl(path || 'search/index.html');
-      location.replace(target);
-      return;
-    }
-
     const bar = document.createElement('div');
     bar.id = 'edgenexus-static-banner';
     bar.style.cssText =
@@ -102,18 +95,22 @@
     if (kind === 'gitee') {
       bar.style.background = '#e8f5e9';
       bar.style.color = '#1b5e20';
-      bar.innerHTML = '✓ <strong>Gitee 国内站</strong> · 本地 PDF 请用 <code style="background:#c8e6c9;padding:1px 6px;border-radius:4px">search/open.bat</code>';
+      bar.innerHTML = '✓ <strong>Gitee 国内站</strong> · 本地 PDF：<code style="background:#c8e6c9;padding:1px 6px;border-radius:4px">search/open.bat</code>';
     } else if (kind === 'github') {
-      bar.style.background = '#fff8e1';
-      bar.style.color = '#5d4037';
+      bar.style.background = '#eef5ff';
+      bar.style.color = '#1a478a';
       bar.innerHTML =
-        'GitHub Pages · 国内慢可改用 <a href="' + GITEE_PAGES + '/search/index.html" style="font-weight:700">Gitee 国内站</a> · ' +
-        '<a href="' + GITHUB_PAGES.replace('/search/index.html', '') + '/go.html" style="font-weight:700">访问说明</a>';
+        '✓ 在线站 · 无需登录 · <a href="' + GITHUB_PAGES + '/start.html" style="font-weight:700">返回首页</a> · 本地 PDF：<code>search/open.bat</code>';
+    } else if (kind === 'bad-cdn') {
+      bar.style.background = '#ffebee';
+      bar.style.color = '#b71c1c';
+      bar.innerHTML =
+        '当前链接会显示代码，请改用 <a href="' + GITHUB_PAGES + '/start.html" style="font-weight:700">正确入口</a>';
     } else {
       bar.style.background = '#fff8e1';
       bar.style.color = '#5d4037';
       bar.innerHTML =
-        '在线预览 · 正确入口见 <a href="' + pagesUrl('go.html') + '">go.html</a> · 本地 PDF：<code>search/open.bat</code>';
+        '在线预览 · <a href="' + pagesUrl('start.html') + '">站点首页</a> · 本地 PDF：<code>search/open.bat</code>';
     }
     document.body.insertBefore(bar, document.body.firstChild);
   }

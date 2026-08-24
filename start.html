@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EdgeNexus · 边云合智</title>
+<link rel="icon" href="search/assets/favicon.svg" type="image/svg+xml">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(160deg, #0f2f5c 0%, #1a478a 55%, #2563b0 100%);
+    min-height: 100vh; padding: 20px 16px 40px; color: #fff;
+  }
+  .wrap { max-width: 480px; margin: 0 auto; }
+  .hero { text-align: center; padding: 24px 0 20px; }
+  .hero h1 { font-size: 1.5rem; font-weight: 800; }
+  .hero p { opacity: .9; font-size: .9rem; margin-top: 8px; line-height: 1.55; }
+  .pill {
+    display: inline-block; margin-top: 12px; padding: 4px 12px; border-radius: 999px;
+    background: rgba(255,255,255,.15); font-size: .78rem; font-weight: 700;
+  }
+  .card {
+    background: #fff; color: #333; border-radius: 16px; padding: 22px 20px;
+    box-shadow: 0 16px 48px rgba(0,0,0,.22);
+  }
+  .card h2 { font-size: .95rem; color: #1a478a; margin-bottom: 12px; }
+  .btn {
+    display: block; padding: 14px 16px; margin: 8px 0; border-radius: 11px;
+    text-decoration: none; font-weight: 700; font-size: .92rem; text-align: center;
+  }
+  .primary { background: #2e7d32; color: #fff; }
+  .primary:hover { background: #388e3c; color: #fff; }
+  .secondary { background: #eef5ff; color: #1a478a; }
+  .note {
+    margin-top: 14px; padding: 12px; border-radius: 10px; background: #f0f4f8;
+    font-size: .78rem; line-height: 1.65; color: #555;
+  }
+  .note strong { color: #1a478a; }
+  .qr { text-align: center; margin: 16px 0 8px; }
+  .qr img { width: 160px; height: 160px; border-radius: 10px; background: #fff; padding: 8px; }
+  .qr p { font-size: .72rem; color: #888; margin-top: 6px; }
+  .url-box {
+    margin-top: 10px; padding: 10px; background: #f5f5f5; border-radius: 8px;
+    font-size: .72rem; word-break: break-all; color: #444; line-height: 1.5;
+    user-select: all;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <h1>EdgeNexus · 边云合智</h1>
+    <p>云边协同 · 文献 · 复现 · 汇报 · 项目</p>
+    <span class="pill">✓ 打开即用 · 无需登录 · 手机电脑都行</span>
+  </div>
+
+  <div class="card">
+    <h2>进入站点（点下面按钮）</h2>
+    <a class="btn primary" href="search/index.html">📚 文献检索</a>
+    <a class="btn primary" href="briefing/index.html">🎓 开学见导师汇报</a>
+    <a class="btn secondary" href="projects/index.html?id=fl-med-cecc">📁 我的项目</a>
+    <a class="btn secondary" href="reproduce/index.html">🔬 复现案例</a>
+    <a class="btn secondary" href="videos/index.html">🎬 会议视频</a>
+    <a class="btn secondary" href="waic/index.html">📝 WAIC 学习</a>
+
+    <div class="qr">
+      <img id="qr" alt="二维码" width="160" height="160">
+      <p>手机扫码 · 同上地址</p>
+    </div>
+    <div class="url-box" id="site-url"></div>
+
+    <div class="note">
+      <strong>不用登录任何账号</strong>，直接打开就是网页（不是代码）。<br>
+      若 GitHub 在国内打不开，在家用 <strong>search\open.bat</strong> 本地版（含 PDF）。<br>
+      勿用 <code>raw.githubusercontent.com</code> 或 <code>cdn.jsdelivr.net/gh/…html</code>（会显示源码）。
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var base = location.origin + location.pathname.replace(/\/[^/]*$/, '/');
+  if (!location.pathname.includes('postgraduate-project') && location.hostname.includes('github.io')) {
+    base = location.origin + '/postgraduate-project/';
+  }
+  document.getElementById('site-url').textContent = base;
+  document.getElementById('qr').src =
+    'https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=' + encodeURIComponent(base + 'start.html');
+})();
+</script>
+</body>
+</html>

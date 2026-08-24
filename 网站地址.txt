@@ -1,0 +1,32 @@
+# EdgeNexus · 打开网站（本地完整版，含 PDF）
+
+**不用登录。** 下面链接直接打开就是网页。
+
+## 唯一入口（收藏这个）
+
+**https://qazplmygc.github.io/postgraduate-project/start.html**
+
+- 手机、平板、电脑都能用  
+- **查看不需要** GitHub / Gitee 账号  
+- 约 1 分钟自动更新（改完代码后双击 `更新网站.bat`）
+
+## 常用直达
+
+| 页面 | 链接 |
+|------|------|
+| 文献检索 | https://qazplmygc.github.io/postgraduate-project/search/index.html |
+| 开学汇报 | https://qazplmygc.github.io/postgraduate-project/briefing/index.html |
+| 项目管理 | https://qazplmygc.github.io/postgraduate-project/projects/index.html?id=fl-med-cecc |
+
+## 本地完整版（含 D:\刚需 PDF）
+
+双击 `search\open.bat` → http://127.0.0.1:8765/start.html
+
+## 更新线上内容
+
+双击 **`更新网站.bat`**（只需本机已登录过 GitHub 推送，**看网站的人不用登录**）
+
+## 勿用这些地址（会显示代码）
+
+- `raw.githubusercontent.com/...`
+- `cdn.jsdelivr.net/gh/.../index.html`
