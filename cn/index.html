@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EdgeNexus · 国内加速入口</title>
+<link rel="icon" href="../search/assets/favicon.svg" type="image/svg+xml">
+<style>
+  :root { --primary: #1a478a; --accent: #2e7d32; --bg: #f0f4f8; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(160deg, #0f2f5c, #1a478a 50%, #2563b0);
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 24px; color: #fff;
+  }
+  .box {
+    background: #fff; color: #333; border-radius: 16px; padding: 32px 28px;
+    max-width: 520px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  }
+  h1 { font-size: 1.35rem; color: var(--primary); margin-bottom: 6px; }
+  .sub { font-size: .88rem; color: #666; line-height: 1.55; margin-bottom: 22px; }
+  .btn {
+    display: block; width: 100%; padding: 14px 18px; margin-bottom: 10px;
+    border-radius: 10px; text-decoration: none; font-weight: 700; font-size: .95rem;
+    text-align: center; border: 2px solid transparent; transition: transform .12s;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-cn { background: var(--accent); color: #fff; }
+  .btn-cn:hover { background: #388e3c; color: #fff; }
+  .btn-gh { background: #eef5ff; color: var(--primary); border-color: #bbdefb; }
+  .btn-local { background: #f5f5f5; color: #555; border-color: #ddd; font-size: .85rem; }
+  .tag {
+    display: inline-block; font-size: .68rem; font-weight: 800; padding: 2px 8px;
+    border-radius: 999px; margin-left: 6px; vertical-align: middle;
+  }
+  .tag-rec { background: #e8f5e9; color: #2e7d32; }
+  .tag-vpn { background: #fce4ec; color: #c62828; }
+  .links { margin-top: 18px; font-size: .78rem; color: #888; line-height: 1.8; }
+  .links a { color: var(--primary); }
+</style>
+</head>
+<body>
+<div class="box">
+  <h1>EdgeNexus · 边云合智</h1>
+  <p class="sub">GitHub Pages 在国内慢且常需 VPN。请优先用<strong>国内加速</strong>（jsDelivr CDN，免登录、免 VPN）。</p>
+
+  <a class="btn btn-cn" id="go-cn" href="#">
+    国内加速 · 立即进入 <span class="tag tag-rec">推荐</span>
+  </a>
+  <a class="btn btn-gh" href="https://qazplmygc.github.io/postgraduate-project/search/index.html">
+    GitHub 原版 <span class="tag tag-vpn">可能需 VPN</span>
+  </a>
+  <p class="links">
+    本地完整版（含 D:\刚需 PDF）：双击 <code>search\open.bat</code><br>
+    Gitee 版（最快，需一次性开通 Pages）：见 <a href="https://gitee.com/qazplmygc/postgraduate-project">gitee.com/qazplmygc/postgraduate-project</a>
+  </p>
+</div>
+<script>
+const CDN = 'https://cdn.jsdelivr.net/gh/qazplmygc/postgraduate-project@main';
+const pages = {
+  search: CDN + '/search/index.html',
+  briefing: CDN + '/briefing/index.html',
+  projects: CDN + '/projects/index.html?id=fl-med-cecc',
+  reproduce: CDN + '/reproduce/index.html',
+  videos: CDN + '/videos/index.html',
+  waic: CDN + '/waic/index.html',
+};
+document.getElementById('go-cn').href = pages.search;
+// Auto redirect from github.io to CDN (once per session, skip if ?stay=1)
+if (location.hostname.includes('github.io') && !location.search.includes('stay=1') && !sessionStorage.getItem('edgenexus-stay-gh')) {
+  sessionStorage.setItem('edgenexus-mirror', '1');
+  location.replace(pages.search);
+}
+</script>
+</body>
+</html>

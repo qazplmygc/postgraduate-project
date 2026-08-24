@@ -2,13 +2,40 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0;url=search/index.html">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EdgeNexus · 边云合智</title>
 <link rel="icon" href="search/assets/favicon.svg" type="image/svg+xml">
-<script>location.replace('search/index.html');</script>
+<style>
+  body { font-family: "Segoe UI","Microsoft YaHei",sans-serif; background:#0f2f5c; min-height:100vh;
+    display:flex; align-items:center; justify-content:center; margin:0; padding:20px; }
+  .box { background:#fff; border-radius:16px; padding:28px; max-width:480px; width:100%; text-align:center; }
+  h1 { color:#1a478a; font-size:1.3rem; margin:0 0 8px; }
+  p { color:#666; font-size:.88rem; line-height:1.6; margin:0 0 20px; }
+  a { display:block; padding:13px; margin:8px 0; border-radius:10px; text-decoration:none; font-weight:700; }
+  .cn { background:#2e7d32; color:#fff; }
+  .gh { background:#eef5ff; color:#1a478a; }
+  .local { background:#f5f5f5; color:#555; font-size:.84rem; }
+</style>
+<script>
+(function(){
+  var cdn='https://cdn.jsdelivr.net/gh/qazplmygc/postgraduate-project@main/search/index.html';
+  var host=location.hostname;
+  if(host.includes('github.io')&&!location.search.includes('stay=1')){
+    location.replace(cdn); return;
+  }
+  if((host.includes('gitee.io')||host.includes('jsdelivr.net'))&&!location.pathname.includes('/search/')){
+    location.replace(cdn);
+  }
+})();
+</script>
 </head>
 <body>
-<p><a href="search/index.html">进入 EdgeNexus 文献检索</a></p>
+<div class="box">
+  <h1>EdgeNexus · 边云合智</h1>
+  <p>选择访问方式。国内请用<strong>国内加速</strong>，无需 VPN。</p>
+  <a class="cn" href="https://cdn.jsdelivr.net/gh/qazplmygc/postgraduate-project@main/search/index.html">国内加速（推荐）</a>
+  <a class="gh" href="search/index.html?stay=1">GitHub Pages 原版</a>
+  <a class="local" href="cn/index.html">更多入口说明</a>
+</div>
 </body>
 </html>
