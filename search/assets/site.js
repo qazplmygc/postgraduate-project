@@ -1,22 +1,8 @@
-/** EdgeNexus: local dev vs GitHub Pages / Gitee Pages */
+/** EdgeNexus: local PDF API + online helpers */
 (function (global) {
-  const GITEE_PAGES = 'https://qazplmygc.gitee.io/postgraduate-project';
-  const GITHUB_PAGES = 'https://qazplmygc.github.io/postgraduate-project';
-
   function isLocalDev() {
     const h = location.hostname;
     return h === '127.0.0.1' || h === 'localhost' || h === '';
-  }
-
-  function hostKind() {
-    const h = location.hostname;
-    if (isLocalDev()) return 'local';
-    if (h.includes('gitee.io')) return 'gitee';
-    if (h.includes('github.io')) return 'github';
-    if (h.includes('jsdelivr.net') || h.includes('statically.io') || h.includes('raw.githubusercontent.com')) {
-      return 'bad-cdn';
-    }
-    return 'other';
   }
 
   function detectBasePath() {
@@ -26,7 +12,7 @@
       return b.endsWith('/') ? b : b + '/';
     }
     const parts = location.pathname.split('/').filter(Boolean);
-    const sections = ['search', 'patents', 'reproduce', 'videos', 'waic', 'projects', 'briefing', 'cn'];
+    const sections = ['search', 'patents', 'reproduce', 'videos', 'waic', 'projects', 'briefing'];
     for (let i = 0; i < parts.length; i++) {
       if (sections.includes(parts[i])) {
         return i === 0 ? '/' : '/' + parts.slice(0, i).join('/') + '/';
@@ -36,7 +22,6 @@
   }
 
   const basePath = detectBasePath();
-  const kind = hostKind();
 
   function pdfApiUrl(relativePath) {
     if (!relativePath || !isLocalDev()) return null;
@@ -47,12 +32,6 @@
   function staticAssetUrl(relativeFromRoot) {
     const rel = String(relativeFromRoot).replace(/\\/g, '/').replace(/^\//, '');
     return basePath + rel;
-  }
-
-  function pagesUrl(section) {
-    const path = section.startsWith('/') ? section.slice(1) : section;
-    if (kind === 'gitee') return GITEE_PAGES + '/' + path;
-    return GITHUB_PAGES + '/' + path;
   }
 
   function openPdfSmart(opts) {
@@ -76,22 +55,12 @@
       return true;
     }
     alert(
-      '在线版无法打开本地 PDF 库（D:\\刚需\\…）。\n\n' +
-      '• 在家/实验室：双击 search\\open.bat\n' +
-      (o.doi ? '• 或点击 DOI 链接' : '• 或在本机 EdgeNexus 打开')
+      '在线版无法打开本地 PDF。\n\n' +
+      '请在本机运行 search\\open.bat 后打开。' +
+      (o.doi ? '\n或尝试 DOI 链接。' : '')
     );
     return false;
   }
 
-  global.EdgeNexus = {
-    isLocalDev,
-    hostKind,
-    basePath,
-    GITEE_PAGES,
-    GITHUB_PAGES,
-    pdfApiUrl,
-    staticAssetUrl,
-    pagesUrl,
-    openPdfSmart,
-  };
+  global.EdgeNexus = { isLocalDev, basePath, pdfApiUrl, staticAssetUrl, openPdfSmart };
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -21,10 +21,6 @@ timeout /t 1 /nobreak >nul
 goto wait_ready
 
 :ready
-start "" "http://127.0.0.1:8765/search/index.html"
-echo EdgeNexus started.
-echo Search:    http://127.0.0.1:8765/search/index.html
-echo Patents:   http://127.0.0.1:8765/patents/index.html
-echo Reproduce: http://127.0.0.1:8765/reproduce/index.html
-echo Videos:    http://127.0.0.1:8765/videos/index.html
+start "" "http://127.0.0.1:8765/start.html"
+echo EdgeNexus started: http://127.0.0.1:8765/start.html
 echo Close the "EdgeNexus Server" window to stop.
